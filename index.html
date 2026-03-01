@@ -433,7 +433,7 @@
         <h3>Seguro Auto</h3>
         <p>Proteção completa contra roubo, colisão, incêndio e danos a terceiros para o seu veículo.</p>
         <div class="promo-pill"><span class="promo-pct">até 35% OFF</span><span class="promo-label">na contratação</span></div>
-        <button class="service-btn">Fazer cotação →</button>
+        <button class="service-btn" onclick="event.stopPropagation();openModal('auto')">Fazer cotação →</button>
       </div>
 
       <!-- RESIDENCIAL -->
@@ -442,7 +442,7 @@
         <h3>Seguro Residencial</h3>
         <p>Proteja seu lar contra incêndio, roubo, danos elétricos e responsabilidade civil.</p>
         <div class="promo-pill"><span class="promo-pct">até 30% OFF</span><span class="promo-label">na contratação</span></div>
-        <button class="service-btn">Fazer cotação →</button>
+        <button class="service-btn" onclick="event.stopPropagation();openModal('residencial')">Fazer cotação →</button>
       </div>
 
       <!-- EMPRESARIAL -->
@@ -451,7 +451,7 @@
         <h3>Seguro Empresarial</h3>
         <p>Proteja seu negócio, estoque, equipamentos e responsabilidade civil de forma completa.</p>
         <div class="promo-pill"><span class="promo-pct">até 30% OFF</span><span class="promo-label">na contratação</span></div>
-        <button class="service-btn">Fazer cotação →</button>
+        <button class="service-btn" onclick="event.stopPropagation();openModal('empresarial')">Fazer cotação →</button>
       </div>
 
       <!-- VIAGEM -->
@@ -460,7 +460,7 @@
         <h3>Seguro Viagem</h3>
         <p>Cobertura médica, bagagem e assistência 24h em destinos nacionais e internacionais.</p>
         <div class="promo-pill"><span class="promo-pct">até 31% OFF</span><span class="promo-label">na contratação</span></div>
-        <button class="service-btn">Fazer cotação →</button>
+        <button class="service-btn" onclick="event.stopPropagation();openModal('viagem')">Fazer cotação →</button>
       </div>
 
       <!-- CELULAR -->
@@ -469,7 +469,7 @@
         <h3>Proteção para Celular</h3>
         <p>Roubo, furto, quebra acidental, danos elétricos e oxidação para o seu smartphone.</p>
         <div class="promo-pill"><span class="promo-pct">até 30% OFF</span><span class="promo-label">na contratação</span></div>
-        <button class="service-btn">Fazer cotação →</button>
+        <button class="service-btn" onclick="event.stopPropagation();openModal('celular')">Fazer cotação →</button>
       </div>
 
       <!-- PORTÁTEIS -->
@@ -478,7 +478,7 @@
         <h3>Portáteis & Equipamentos</h3>
         <p>Proteção para notebooks, câmeras, tablets e equipamentos profissionais contra danos e roubo.</p>
         <div class="promo-pill"><span class="promo-pct">até 28% OFF</span><span class="promo-label">na contratação</span></div>
-        <button class="service-btn">Fazer cotação →</button>
+        <button class="service-btn" onclick="event.stopPropagation();openModal('portateis')">Fazer cotação →</button>
       </div>
 
     </div>
@@ -546,7 +546,7 @@
         <h3>Fale com nossa equipe</h3>
         <p>Seja para tirar dúvidas, solicitar uma cotação ou contratar um plano, estamos aqui para te ajudar de forma simples e rápida.</p>
         <div class="contact-item"><div class="c-icon">📱</div><div><strong>Telefone / WhatsApp</strong><span>(11) 98788-6129</span></div></div>
-        <div class="contact-item"><div class="c-icon">✉️</div><div><strong>E-mail</strong><span><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="670d120b0e060906380a06150e060306140902110214270f08130a060e0b4904080a">[email&#160;protected]</a></span></div></div>
+        <div class="contact-item"><div class="c-icon">✉️</div><div><strong>E-mail</strong><span><a href="mailto:juliana_mariadasneves@hotmail.com">juliana_mariadasneves@hotmail.com</a></span></div></div>
         <div class="contact-item"><div class="c-icon">🌎</div><div><strong>Atendimento</strong><span>Todo o Brasil — 100% online</span></div></div>
         <div class="badge-24">Equipe disponível 24 horas, 7 dias por semana</div>
       </div>
@@ -593,7 +593,7 @@
   </div>
   <p>Consultoria Especializada em Seguros</p>
   <hr>
-  <p>(11) 98788-6129 • <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="6c061900050d020d33010d1e050d080d1f02091a091f2c040318010d0500420f0301">[email&#160;protected]</a></p>
+  <p>(11) 98788-6129 • <a href="mailto:juliana_mariadasneves@hotmail.com" style="color:inherit;">juliana_mariadasneves@hotmail.com</a></p>
   <p style="margin-top:8px; font-size:0.78rem;">© 2025 JN Seguros. Todos os direitos reservados.</p>
   <p style="margin-top:6px;"><a href="admin.html" style="font-size:0.7rem; color:rgba(255,255,255,0.25); text-decoration:none;" title="Painel Administrativo">⚙ Painel Admin</a></p>
 </footer>
@@ -650,7 +650,7 @@
   </div>
 </div>
 
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+<script>
 // ===== CAMPOS DINÂMICOS POR TIPO =====
 const FIELDS = {
   auto: {
