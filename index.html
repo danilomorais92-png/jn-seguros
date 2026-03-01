@@ -323,22 +323,154 @@
   .sp-viewers-text { font-size: 0.78rem; color: var(--blue-900); font-weight: 600; }
 
   /* RESPONSIVE */
+  /* ===== HAMBURGER MENU ===== */
+  .nav-hamburger {
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    gap: 5px;
+    width: 40px; height: 40px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 8px;
+    cursor: pointer;
+    padding: 8px;
+    flex-shrink: 0;
+  }
+  .nav-hamburger span {
+    display: block; height: 2px;
+    background: white; border-radius: 2px;
+    transition: all .3s;
+  }
+  .nav-hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+  .nav-hamburger.open span:nth-child(2) { opacity: 0; }
+  .nav-hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+  /* Mobile nav overlay */
+  .mobile-nav {
+    display: none;
+    position: fixed; top: 68px; left: 0; right: 0;
+    background: rgba(10,22,40,0.98);
+    backdrop-filter: blur(20px);
+    z-index: 199;
+    padding: 20px 24px 32px;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    transform: translateY(-10px);
+    opacity: 0;
+    transition: all .3s;
+  }
+  .mobile-nav.open { display: block; transform: translateY(0); opacity: 1; }
+  .mobile-nav ul { list-style: none; margin-bottom: 20px; }
+  .mobile-nav ul li { border-bottom: 1px solid rgba(255,255,255,0.06); }
+  .mobile-nav ul li a {
+    display: block; padding: 16px 4px;
+    color: rgba(255,255,255,0.85); text-decoration: none;
+    font-weight: 600; font-size: 1.05rem;
+    transition: color .2s;
+  }
+  .mobile-nav ul li a:hover { color: var(--blue-400); }
+  .mobile-nav .nav-cta-mobile {
+    display: block; width: 100%; padding: 15px;
+    background: var(--blue-500); color: white;
+    border: none; border-radius: 10px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 700; font-size: 1rem;
+    cursor: pointer; text-align: center;
+  }
+
+  /* ===== TABLET (max 1024px) ===== */
+  @media (max-width: 1024px) {
+    nav { padding: 0 28px; }
+    .hero { padding: 100px 32px 70px; }
+    .hero-inner { gap: 44px; }
+    section, .partners-section { padding: 80px 32px; }
+    .contact-grid { gap: 48px; }
+    .plans-grid { grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); }
+    footer { padding: 48px 32px; }
+  }
+
+  /* ===== MOBILE (max 768px) ===== */
   @media (max-width: 768px) {
+    /* NAV */
     nav { padding: 0 20px; }
     .nav-links { display: none; }
-    section, .partners-section { padding: 70px 20px; }
-    .hero { padding: 100px 20px 70px; }
-    .hero-inner { grid-template-columns: 1fr; gap: 40px; }
+    .nav-cta { display: none; }
+    .nav-hamburger { display: flex; }
+
+    /* PROMO */
+    .promo-banner { padding: 10px 16px; }
+    .promo-banner p { font-size: 0.78rem; gap: 8px; }
+
+    /* SECTIONS */
+    section, .partners-section { padding: 60px 20px; }
+    .section-header { margin-bottom: 40px; }
+    .section-heading { font-size: clamp(1.5rem, 6vw, 2rem); }
+
+    /* HERO */
+    .hero { padding: 96px 20px 60px; min-height: auto; }
+    .hero-inner { grid-template-columns: 1fr; gap: 32px; }
     .hero-img-wrap { order: -1; }
-    .trust-badge { left: 20px; transform: none; min-width: auto; }
-    .contact-grid { grid-template-columns: 1fr; gap: 40px; }
+    .hero-img-wrap img { height: 260px; border-radius: 16px; }
+    .trust-badge { left: 16px; right: 16px; transform: none; min-width: auto; bottom: -14px; }
+    .trust-badge strong { font-size: 0.82rem; }
+    .hero h1 { font-size: clamp(1.9rem, 7vw, 2.6rem); }
+    .hero-desc { font-size: 0.92rem; margin-bottom: 28px; }
+    .hero-btns { flex-direction: column; }
+    .btn-blue, .btn-ghost { width: 100%; text-align: center; padding: 14px 20px; }
+    .hero-stats { gap: 24px; flex-wrap: wrap; margin-top: 36px; padding-top: 28px; }
+    .stat-num { font-size: 1.5rem; }
+
+    /* PARTNERS */
+    .partners-row { gap: 24px; }
+    .partner-logo { height: 42px; }
+
+    /* SERVICES */
+    .services-grid { grid-template-columns: 1fr 1fr; gap: 14px; }
+    .service-card { padding: 22px 16px; }
+    .service-icon-wrap { width: 54px; height: 54px; font-size: 1.6rem; }
+    .service-card h3 { font-size: 0.9rem; }
+    .service-card p { font-size: 0.8rem; }
+
+    /* WHY */
+    .why-grid { grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 40px; }
+    .why-card { padding: 22px 16px; }
+    .why-card h4 { font-size: 0.88rem; }
+    .why-card p { font-size: 0.78rem; }
+
+    /* PLANS */
+    .plans-grid { grid-template-columns: 1fr; gap: 20px; margin-top: 40px; }
+    .plan-card { padding: 28px 24px; }
+
+    /* CONTACT */
+    .contact-grid { grid-template-columns: 1fr; gap: 36px; }
     .form-row, .dyn-grid { grid-template-columns: 1fr; }
     .span-full { grid-column: auto; }
+    .form-card { padding: 28px 20px; }
+
+    /* FOOTER */
     footer { padding: 36px 20px; }
-    .modal { padding: 28px 20px; }
-    .partners-row { gap: 28px; }
+
+    /* MODAL */
+    .modal { padding: 28px 18px; border-radius: 18px; }
+    .modal h3 { font-size: 1.2rem; }
+    .type-tabs { gap: 6px; }
+    .type-tab { padding: 6px 11px; font-size: 0.75rem; }
+
+    /* SOCIAL PROOF */
     .sp-container { left: 12px; bottom: 90px; }
-    .sp-popup, .sp-viewers { min-width: 230px; max-width: 280px; }
+    .sp-popup, .sp-viewers { min-width: 220px; max-width: 270px; }
+
+    /* WHATSAPP */
+    .wa-btn { width: 52px; height: 52px; bottom: 20px; right: 20px; }
+  }
+
+  /* ===== SMALL MOBILE (max 480px) ===== */
+  @media (max-width: 480px) {
+    .services-grid { grid-template-columns: 1fr; }
+    .why-grid { grid-template-columns: 1fr; }
+    .hero-stats { gap: 16px; }
+    .hero-stats > div { flex: 1 1 40%; }
+    .sp-popup, .sp-viewers { display: none; }
   }
 </style>
 </head>
@@ -360,7 +492,21 @@
     <li><a href="#contato">Contato</a></li>
   </ul>
   <button class="nav-cta" onclick="openModal()">Solicitar Cotação</button>
+  <button class="nav-hamburger" id="navHamburger" onclick="toggleMobileNav()" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
 </nav>
+
+<!-- MOBILE NAV -->
+<div class="mobile-nav" id="mobileNav">
+  <ul>
+    <li><a href="#servicos" onclick="closeMobileNav()">Seguros</a></li>
+    <li><a href="#parceiros" onclick="closeMobileNav()">Parceiras</a></li>
+    <li><a href="#planos" onclick="closeMobileNav()">Planos</a></li>
+    <li><a href="#contato" onclick="closeMobileNav()">Contato</a></li>
+  </ul>
+  <button class="nav-cta-mobile" onclick="closeMobileNav(); openModal()">Solicitar Cotação</button>
+</div>
 
 <!-- PROMO BANNER -->
 <div class="promo-banner">
@@ -546,7 +692,7 @@
         <h3>Fale com nossa equipe</h3>
         <p>Seja para tirar dúvidas, solicitar uma cotação ou contratar um plano, estamos aqui para te ajudar de forma simples e rápida.</p>
         <div class="contact-item"><div class="c-icon">📱</div><div><strong>Telefone / WhatsApp</strong><span>(11) 98788-6129</span></div></div>
-        <div class="contact-item"><div class="c-icon">✉️</div><div><strong>E-mail</strong><span><a href="mailto:juliana_mariadasneves@hotmail.com" style="color:inherit;">juliana_mariadasneves@hotmail.com</a></span></div></div>
+        <div class="contact-item"><div class="c-icon">✉️</div><div><strong>E-mail</strong><span><a href="mailto:juliana_mariadasneves@hotmail.com">juliana_mariadasneves@hotmail.com</a></span></div></div>
         <div class="contact-item"><div class="c-icon">🌎</div><div><strong>Atendimento</strong><span>Todo o Brasil — 100% online</span></div></div>
         <div class="badge-24">Equipe disponível 24 horas, 7 dias por semana</div>
       </div>
@@ -593,9 +739,8 @@
   </div>
   <p>Consultoria Especializada em Seguros</p>
   <hr>
-  <p>(11) 98788-6129 • <a href="mailto:juliana_mariadasneves@hotmail.com" style="color:inherit;">juliana_mariadasneves@hotmail.com</a></p>
+  <p>(11) 98788-6129 • <a href="mailto:juliana_mariadasneves@hotmail.com">juliana_mariadasneves@hotmail.com</a></p>
   <p style="margin-top:8px; font-size:0.78rem;">© 2025 JN Seguros. Todos os direitos reservados.</p>
-  <p style="margin-top:6px;"><a href="admin.html" style="font-size:0.7rem; color:rgba(255,255,255,0.25); text-decoration:none;" title="Painel Administrativo">⚙ Painel Admin</a></p>
 </footer>
 
 <!-- WHATSAPP BTN -->
@@ -651,6 +796,18 @@
 </div>
 
 <script>
+// ===== MOBILE NAV =====
+function toggleMobileNav() {
+  const nav = document.getElementById('mobileNav');
+  const btn = document.getElementById('navHamburger');
+  nav.classList.toggle('open');
+  btn.classList.toggle('open');
+}
+function closeMobileNav() {
+  document.getElementById('mobileNav').classList.remove('open');
+  document.getElementById('navHamburger').classList.remove('open');
+}
+
 // ===== CAMPOS DINÂMICOS POR TIPO =====
 const FIELDS = {
   auto: {
@@ -777,30 +934,6 @@ function buildBody(base, type, extra) {
   return encodeURIComponent(body);
 }
 
-
-function saveLeadToAdmin(nome, tel, email, tipo, extra) {
-  try {
-    const leads = JSON.parse(localStorage.getItem('leads') || '[]');
-    const extraInfo = extra && Object.keys(extra).length
-      ? Object.entries(extra).map(([k,v]) => k + ': ' + v).join(' | ')
-      : '';
-    leads.push({
-      id: Date.now(),
-      nome: nome,
-      telefone: tel,
-      email: email,
-      tipo: tipo,
-      cpf: '',
-      veiculo: extraInfo,
-      obs: 'Via formulário do site',
-      status: 'lead',
-      data: new Date().toISOString(),
-      contatoFeito: false
-    });
-    localStorage.setItem('leads', JSON.stringify(leads));
-  } catch(e) { console.warn('Erro ao salvar lead:', e); }
-}
-
 function sendContactForm() {
   const nome = document.getElementById('c_nome').value.trim();
   const tel = document.getElementById('c_tel').value.trim();
@@ -808,7 +941,6 @@ function sendContactForm() {
   const tipo = document.getElementById('c_tipo').value;
   if (!nome || !tel || !email || !tipo) { alert('Preencha todos os campos obrigatórios (*).'); return; }
   const extra = collectDynamic('contact', tipo);
-  saveLeadToAdmin(nome, tel, email, tipo, extra);
   window.location.href = `mailto:juliana_mariadasneves@hotmail.com?subject=${encodeURIComponent('Cotação — ' + nome)}&body=${buildBody({ nome, tel, email }, tipo, extra)}`;
   document.getElementById('contactFormWrap').style.display = 'none';
   document.getElementById('contactSuccess').style.display = 'block';
@@ -822,7 +954,6 @@ function sendModalForm() {
   if (!nome || !tel || !email) { alert('Preencha nome, telefone e e-mail.'); return; }
   if (!currentType) { alert('Selecione o tipo de seguro.'); return; }
   const extra = collectDynamic('modal', currentType);
-  saveLeadToAdmin(nome, tel, email, currentType, extra);
   window.location.href = `mailto:juliana_mariadasneves@hotmail.com?subject=${encodeURIComponent('Cotação — ' + nome)}&body=${buildBody({ nome, tel, email, horario }, currentType, extra)}`;
   document.getElementById('modalFormWrap').style.display = 'none';
   document.getElementById('modalSuccess').style.display = 'block';
@@ -851,10 +982,3 @@ function spShowNext() {
     const vEl = document.createElement('div');
     vEl.className = 'sp-viewers';
     vEl.innerHTML = `<div class="sp-viewers-dot"></div><div class="sp-viewers-text"><strong>${spViewers} pessoas</strong> estão vendo seguros agora</div>`;
-    container.appendChild(vEl);
-    setTimeout(() => { vEl.classList.add('sp-hide'); setTimeout(() => vEl.remove(), 500); }, 4500);
-  } else {
-    const data = SP_DATA[spIdx % SP_DATA.length];
-    const el = document.createElement('div');
-    el.className = 'sp-popup';
-    el.innerHTML = `<div class="sp-avatar">${data.icon}</div><div class="sp-text"><div class="sp-name">${data.name} <span style="font-weight:400;color:var(--gray-50
