@@ -190,6 +190,25 @@
   .pie-item { display: flex; align-items: center; gap: 10px; font-size: 0.83rem; }
   .pie-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
 
+  
+  /* ===== DETAIL MODAL ===== */
+  .detail-modal { max-width:720px; max-height:85vh; overflow-y:auto; }
+  .detail-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; font-size:0.88rem; margin-bottom:20px; }
+  .detail-grid .dlabel { color:var(--muted); font-size:0.75rem; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; }
+  .detail-grid .dval { color:var(--navy); font-weight:600; margin-top:2px; }
+  .detail-full { grid-column:1/-1; }
+  .detail-section { border-top:1.5px dashed var(--border); padding-top:16px; margin-top:8px; grid-column:1/-1; }
+  .detail-section h4 { font-size:0.75rem; font-weight:800; text-transform:uppercase; letter-spacing:1.5px; color:var(--blue); margin-bottom:12px; }
+  .files-list { display:flex; flex-direction:column; gap:8px; }
+  .file-item { display:flex; align-items:center; gap:10px; background:#f8fafc; border:1px solid var(--border); border-radius:8px; padding:10px 14px; }
+  .file-item .fname { flex:1; font-size:0.85rem; font-weight:600; color:var(--navy); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .file-item a { color:var(--blue); font-size:0.8rem; font-weight:600; text-decoration:none; }
+  .file-item .btn-sm { padding:4px 10px; font-size:0.72rem; }
+  .einp { width:100%; padding:8px 12px; border:1.5px solid var(--border); border-radius:8px; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.88rem; background:#f8fafc; }
+  .einp:focus { outline:none; border-color:var(--blue2); background:var(--white); }
+  .dyn-fields { border-top:1.5px dashed var(--border); margin-top:16px; padding-top:16px; animation:fadeUp .3s ease; }
+  .dyn-fields h4 { font-size:0.72rem; font-weight:800; text-transform:uppercase; letter-spacing:1.5px; color:var(--blue); margin-bottom:14px; }
+
   @media(max-width:900px){
     .stats-row{grid-template-columns:1fr 1fr;}
     .form-grid{grid-template-columns:1fr;}
@@ -366,7 +385,7 @@ if(sessionStorage.getItem('jn_admin_auth')==='1'){
       <table>
         <thead>
           <tr>
-            <th>Nome</th><th>CPF/CNPJ</th><th>Telefone</th><th>Tipo</th><th>Vigência</th><th>Vencimento</th><th>Status</th><th>Ações</th>
+            <th>Nome</th><th>Telefone</th><th>Tipo</th><th>Seguradora</th><th>Vencimento</th><th>Status</th><th>Ações</th>
           </tr>
         </thead>
         <tbody id="segurados-tbody"></tbody>
@@ -390,7 +409,7 @@ if(sessionStorage.getItem('jn_admin_auth')==='1'){
       <table>
         <thead>
           <tr>
-            <th>Nome</th><th>Telefone</th><th>Tipo</th><th>Vencimento</th><th>Dias Restantes</th><th>Contato</th>
+            <th>Nome</th><th>Telefone</th><th>Tipo</th><th>Vencimento</th><th>Dias</th><th>Contato</th><th>Excluir</th>
           </tr>
         </thead>
         <tbody id="vencimentos-tbody"></tbody>
@@ -422,7 +441,7 @@ if(sessionStorage.getItem('jn_admin_auth')==='1'){
           </div>
           <div class="form-group">
             <label>Tipo de Seguro *</label>
-            <select id="s-tipo">
+            <select id="s-tipo" onchange="renderDynAdmin()">
               <option value="auto">Seguro Auto</option>
               <option value="residencial">Seguro Residencial</option>
               <option value="empresarial">Seguro Empresarial</option>
@@ -451,6 +470,7 @@ if(sessionStorage.getItem('jn_admin_auth')==='1'){
             <label>Data de Vencimento *</label>
             <input type="date" id="s-vencimento" required>
           </div>
+          <div class="form-full" id="admin-dyn"></div>
           <div class="form-group form-full">
             <label>Veículo / Bem Segurado</label>
             <input type="text" id="s-bem" placeholder="Ex: Honda Civic 2022 — Placa ABC-1234">
@@ -497,6 +517,21 @@ if(sessionStorage.getItem('jn_admin_auth')==='1'){
       <button class="btn-sm btn-green" onclick="markContacted(currentLeadId)">✅ Marcar como Contatado</button>
       <button class="btn-sm btn-gold" onclick="convertToSegurado(currentLeadId)">🔄 Converter em Segurado</button>
       <button class="btn-sm btn-red" onclick="deleteLead(currentLeadId)">🗑 Apagar Lead</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL DETALHES SEGURADO -->
+<div class="modal-bg" id="modal-segurado" onclick="closeModal('modal-segurado',event)">
+  <div class="modal-box detail-modal">
+    <button class="modal-close" onclick="document.getElementById('modal-segurado').classList.remove('open')">&#x2715;</button>
+    <h3 id="modal-seg-title">Detalhes do Segurado</h3>
+    <div id="modal-seg-body"></div>
+    <div style="display:flex;gap:10px;margin-top:20px;flex-wrap:wrap">
+      <button class="btn-sm btn-blue" id="btn-edit-seg" onclick="toggleEditSegurado()">&#9998; Editar</button>
+      <button class="btn-sm btn-green" id="btn-save-seg" onclick="saveEditSegurado()" style="display:none">&#128190; Salvar</button>
+      <button class="btn-sm btn-gray" id="btn-cancel-seg" onclick="cancelEditSegurado()" style="display:none">Cancelar</button>
+      <button class="btn-sm btn-red" id="btn-del-seg" onclick="deleteSeguradoModal()">&#128465; Apagar</button>
     </div>
   </div>
 </div>
@@ -695,24 +730,21 @@ function convertToSegurado(id){
 function renderSegurados(){
   const segurados = getDB('segurados');
   const tbody = document.getElementById('segurados-tbody');
-  if(!segurados.length){ tbody.innerHTML='<tr><td colspan="8" style="text-align:center;color:var(--muted);padding:40px">Nenhum segurado cadastrado.</td></tr>'; return; }
+  if(!segurados.length){ tbody.innerHTML='<tr><td colspan="7" style="text-align:center;color:var(--muted);padding:40px">Nenhum segurado cadastrado.</td></tr>'; return; }
   tbody.innerHTML = segurados.map(s=>{
     const d = daysLeft(s.vencimento);
-    const vClass = d<=15?'venc-alert':'venc-ok';
-    const vText = d<=0?'Vencido':d<=15?`⚠ ${d} dias`:`✓ ${d} dias`;
-    return `<tr>
-      <td><strong>${s.nome}</strong></td>
-      <td>${s.cpf}</td>
-      <td><a href="https://wa.me/55${s.telefone.replace(/\D/g,'')}" target="_blank" style="color:var(--success);text-decoration:none">📱 ${s.telefone}</a></td>
-      <td><span class="stat-badge badge-info">${tipoLabel(s.tipo)}</span></td>
-      <td>${formatDate(s.inicio)}</td>
-      <td>${formatDate(s.vencimento)}</td>
-      <td><span class="stat-badge ${d<=0?'badge-danger':d<=15?'badge-gold':'badge-success'}">${vText}</span></td>
-      <td style="display:flex;gap:6px">
-        <button class="btn-sm btn-blue" onclick="renovarSegurado(${s.id})">🔄</button>
-        <button class="btn-sm btn-red" onclick="deleteSegurado(${s.id})">🗑</button>
-      </td>
-    </tr>`;
+    const vText = d<=0?'Vencido':d<=15?'\u26a0 '+d+' dias':'\u2713 '+d+' dias';
+    return '<tr style="cursor:pointer" ondblclick="viewSegurado('+s.id+')">'
+      +'<td><strong>'+s.nome+'</strong><br><span style="font-size:0.78rem;color:var(--muted)">'+(s.cpf||'')+'</span></td>'
+      +'<td><a href="https://wa.me/55'+s.telefone.replace(/\D/g,'')+'" target="_blank" style="color:var(--success);text-decoration:none">\ud83d\udcf1 '+s.telefone+'</a></td>'
+      +'<td><span class="stat-badge badge-info">'+tipoLabel(s.tipo)+'</span></td>'
+      +'<td>'+(s.seguradora||'-')+'</td>'
+      +'<td>'+formatDate(s.vencimento)+'<br><span class="stat-badge '+(d<=0?'badge-danger':d<=15?'badge-gold':'badge-success')+'">'+vText+'</span></td>'
+      +'<td><span class="stat-badge '+(s.status==='ativo'?'badge-success':'badge-gray')+'">'+(s.status==='ativo'?'Ativo':'Inativo')+'</span></td>'
+      +'<td style="display:flex;gap:6px;flex-wrap:wrap">'
+      +'<button class="btn-sm btn-blue" onclick="event.stopPropagation();viewSegurado('+s.id+')">\ud83d\udc41 Ver</button>'
+      +'<button class="btn-sm btn-red" onclick="event.stopPropagation();deleteSegurado('+s.id+')">\ud83d\uddd1</button>'
+      +'</td></tr>';
   }).join('');
 }
 
@@ -724,32 +756,26 @@ function deleteSegurado(id){
   showToast('🗑 Segurado removido.');
 }
 
-function renovarSegurado(id){
-  const seg = getDB('segurados');
-  const s = seg.find(x=>x.id===id);
-  if(!s) return;
-  const hist = getDB('historico');
-  hist.push({id:Date.now(),nome:s.nome,tipo:tipoLabel(s.tipo),acao:'Contato de renovação',data:new Date().toISOString(),obs:`Vencimento: ${formatDate(s.vencimento)}`});
-  setDB('historico',hist);
-  showToast(`📞 Contato de renovação registrado para ${s.nome}`);
-}
+
 
 // ============ VENCIMENTOS ============
 function renderVencimentos(){
   const segurados = getDB('segurados');
-  const proximos = segurados.filter(s=>{ const d=daysLeft(s.vencimento); return d>=0&&d<=30; });
+  const hidden = getDB('venc_hidden') || [];
+  const proximos = segurados.filter(s=>{ const d=daysLeft(s.vencimento); return d>=0&&d<=30 && !hidden.includes(s.id); });
   const tbody = document.getElementById('vencimentos-tbody');
-  if(!proximos.length){ tbody.innerHTML='<tr><td colspan="6" style="text-align:center;color:var(--muted);padding:40px">Nenhum vencimento nos próximos 30 dias. ✅</td></tr>'; return; }
+  if(!proximos.length){ tbody.innerHTML='<tr><td colspan="7" style="text-align:center;color:var(--muted);padding:40px">Nenhum vencimento pendente nos pr\u00f3ximos 30 dias. \u2705</td></tr>'; return; }
   tbody.innerHTML = proximos.sort((a,b)=>new Date(a.vencimento)-new Date(b.vencimento)).map(s=>{
     const d = daysLeft(s.vencimento);
-    return `<tr>
-      <td><strong>${s.nome}</strong></td>
-      <td><a href="https://wa.me/55${s.telefone.replace(/\D/g,'')}" target="_blank" style="color:var(--success);text-decoration:none">📱 ${s.telefone}</a></td>
-      <td>${tipoLabel(s.tipo)}</td>
-      <td>${formatDate(s.vencimento)}</td>
-      <td><span class="stat-badge ${d<=7?'badge-danger':d<=15?'badge-gold':'badge-info'}">${d} dias</span></td>
-      <td><button class="btn-sm btn-green" onclick="renovarSegurado(${s.id})">📞 Registrar Contato</button></td>
-    </tr>`;
+    return '<tr>'
+      +'<td><strong>'+s.nome+'</strong></td>'
+      +'<td><a href="https://wa.me/55'+s.telefone.replace(/\D/g,'')+'" target="_blank" style="color:var(--success);text-decoration:none">\ud83d\udcf1 '+s.telefone+'</a></td>'
+      +'<td>'+tipoLabel(s.tipo)+'</td>'
+      +'<td>'+formatDate(s.vencimento)+'</td>'
+      +'<td><span class="stat-badge '+(d<=7?'badge-danger':d<=15?'badge-gold':'badge-info')+'">'+d+' dias</span></td>'
+      +'<td><button class="btn-sm btn-green" onclick="contatarVenc('+s.id+')">\u2705 Registrar Contato</button></td>'
+      +'<td><button class="btn-sm btn-red" onclick="excluirVenc('+s.id+')">\ud83d\uddd1</button></td>'
+      +'</tr>';
   }).join('');
 }
 
@@ -770,13 +796,16 @@ function saveSegurado(e){
     vencimento: document.getElementById('s-vencimento').value,
     bem: document.getElementById('s-bem').value,
     obs: document.getElementById('s-obs').value,
-    status: 'ativo'
+    status: 'ativo',
+    dynamicData: collectDynAdmin(),
+    arquivos: []
   };
   const seg = getDB('segurados');
   seg.push(s);
   setDB('segurados', seg);
   e.target.reset();
-  showToast('💾 Segurado salvo com sucesso!');
+  document.getElementById('admin-dyn').innerHTML='';
+  showToast('\ud83d\udcbe Segurado salvo com sucesso!');
   setTimeout(()=>showPage('segurados',null),1500);
 }
 
@@ -800,6 +829,253 @@ function clearHistory(){
   setDB('historico',[]);
   renderHistorico();
   showToast('🗑 Histórico limpo.');
+}
+
+
+// ============ VENCIMENTO ACTIONS ============
+function contatarVenc(id){
+  const seg = getDB('segurados');
+  const s = seg.find(x=>x.id===id);
+  if(!s) return;
+  const hist = getDB('historico');
+  hist.push({id:Date.now(),nome:s.nome,tipo:tipoLabel(s.tipo),acao:'Contato de renovação',data:new Date().toISOString(),obs:'Vencimento: '+formatDate(s.vencimento)});
+  setDB('historico',hist);
+  const hidden = getDB('venc_hidden')||[];
+  hidden.push(id);
+  setDB('venc_hidden',hidden);
+  renderVencimentos();
+  showToast('✅ Contato registrado! Removido da lista.');
+}
+function excluirVenc(id){
+  if(!confirm('Excluir este vencimento da lista?')) return;
+  const hidden = getDB('venc_hidden')||[];
+  hidden.push(id);
+  setDB('venc_hidden',hidden);
+  renderVencimentos();
+  showToast('🗑 Vencimento removido da lista.');
+}
+
+// ============ VIEW SEGURADO DETAIL ============
+let currentSegId = null;
+
+function viewSegurado(id){
+  const seg = getDB('segurados');
+  const s = seg.find(x=>x.id===id);
+  if(!s) return;
+  currentSegId = id;
+  document.getElementById('btn-edit-seg').style.display='';
+  document.getElementById('btn-save-seg').style.display='none';
+  document.getElementById('btn-cancel-seg').style.display='none';
+  document.getElementById('modal-seg-title').textContent = s.nome;
+  
+  const files = s.arquivos || [];
+  const filesHtml = files.length ? files.map((f,i)=>
+    '<div class="file-item">'
+    +'<span>📄</span>'
+    +'<span class="fname">'+f.name+'</span>'
+    +'<a href="'+f.data+'" download="'+f.name+'">⬇ Baixar</a>'
+    +'<button class="btn-sm btn-red" onclick="removeFile('+s.id+','+i+')">✕</button>'
+    +'</div>').join('') : '<span style="color:var(--muted);font-size:0.85rem">Nenhum arquivo anexado.</span>';
+
+  let dynHtml = '';
+  if(s.dynamicData && Object.keys(s.dynamicData).length){
+    dynHtml = '<div class="detail-section"><h4>📋 Dados Específicos do Seguro</h4></div>';
+    for(const [k,v] of Object.entries(s.dynamicData)){
+      if(v && v!=='Selecione...') dynHtml += '<div><div class="dlabel">'+k+'</div><div class="dval">'+v+'</div></div>';
+    }
+  }
+
+  document.getElementById('modal-seg-body').innerHTML =
+    '<div class="detail-grid">'
+    +'<div><div class="dlabel">CPF/CNPJ</div><div class="dval">'+(s.cpf||'-')+'</div></div>'
+    +'<div><div class="dlabel">WhatsApp</div><div class="dval"><a href="https://wa.me/55'+(s.telefone||'').replace(/\D/g,'')+'" target="_blank" style="color:var(--success)">📱 '+(s.telefone||'-')+'</a></div></div>'
+    +'<div><div class="dlabel">E-mail</div><div class="dval">'+(s.email||'-')+'</div></div>'
+    +'<div><div class="dlabel">Tipo de Seguro</div><div class="dval">'+tipoLabel(s.tipo)+'</div></div>'
+    +'<div><div class="dlabel">Seguradora</div><div class="dval">'+(s.seguradora||'-')+'</div></div>'
+    +'<div><div class="dlabel">Nº Apólice</div><div class="dval">'+(s.apolice||'-')+'</div></div>'
+    +'<div><div class="dlabel">Valor Prêmio</div><div class="dval">R$ '+(s.valor||0).toFixed(2)+'</div></div>'
+    +'<div><div class="dlabel">Vigência</div><div class="dval">'+formatDate(s.inicio)+' a '+formatDate(s.vencimento)+'</div></div>'
+    +'<div class="detail-full"><div class="dlabel">Bem Segurado</div><div class="dval">'+(s.bem||'-')+'</div></div>'
+    +dynHtml
+    +'<div class="detail-full"><div class="dlabel">Observações</div><div class="dval">'+(s.obs||'-')+'</div></div>'
+    +'<div class="detail-section">'
+    +'<h4>📎 Arquivos / Apólice PDF</h4>'
+    +'<div class="files-list" id="seg-files">'+filesHtml+'</div>'
+    +'<div style="margin-top:12px">'
+    +'<input type="file" id="seg-file-input" multiple accept=".pdf,.jpg,.jpeg,.png,.doc,.docx" style="font-size:0.82rem" onchange="uploadFile('+s.id+')">'
+    +'</div></div></div>';
+  document.getElementById('modal-segurado').classList.add('open');
+}
+
+function toggleEditSegurado(){
+  const seg = getDB('segurados');
+  const s = seg.find(x=>x.id===currentSegId);
+  if(!s) return;
+  document.getElementById('btn-edit-seg').style.display='none';
+  document.getElementById('btn-save-seg').style.display='';
+  document.getElementById('btn-cancel-seg').style.display='';
+  const tipoOpts = ['auto','residencial','empresarial','viagem','celular','portateis'];
+  const tipoLabels = ['Seguro Auto','Seguro Residencial','Seguro Empresarial','Seguro Viagem','Proteção Celular','Portáteis'];
+  let selHtml = tipoOpts.map((t,i)=>'<option value="'+t+'" '+(s.tipo===t?'selected':'')+'>'+tipoLabels[i]+'</option>').join('');
+  document.getElementById('modal-seg-body').innerHTML =
+    '<div class="detail-grid">'
+    +'<div><label class="dlabel">Nome</label><input class="einp" id="e-nome" value="'+(s.nome||'')+'"></div>'
+    +'<div><label class="dlabel">CPF/CNPJ</label><input class="einp" id="e-cpf" value="'+(s.cpf||'')+'"></div>'
+    +'<div><label class="dlabel">WhatsApp</label><input class="einp" id="e-tel" value="'+(s.telefone||'')+'"></div>'
+    +'<div><label class="dlabel">E-mail</label><input class="einp" id="e-email" value="'+(s.email||'')+'"></div>'
+    +'<div><label class="dlabel">Tipo Seguro</label><select class="einp" id="e-tipo">'+selHtml+'</select></div>'
+    +'<div><label class="dlabel">Seguradora</label><input class="einp" id="e-seguradora" value="'+(s.seguradora||'')+'"></div>'
+    +'<div><label class="dlabel">Nº Apólice</label><input class="einp" id="e-apolice" value="'+(s.apolice||'')+'"></div>'
+    +'<div><label class="dlabel">Valor Prêmio (R$)</label><input class="einp" id="e-valor" type="number" step="0.01" value="'+(s.valor||0)+'"></div>'
+    +'<div><label class="dlabel">Início Vigência</label><input class="einp" id="e-inicio" type="date" value="'+(s.inicio||'')+'"></div>'
+    +'<div><label class="dlabel">Vencimento</label><input class="einp" id="e-vencimento" type="date" value="'+(s.vencimento||'')+'"></div>'
+    +'<div class="detail-full"><label class="dlabel">Bem Segurado</label><input class="einp" id="e-bem" value="'+(s.bem||'')+'"></div>'
+    +'<div class="detail-full"><label class="dlabel">Observações</label><textarea class="einp" id="e-obs" rows="3">'+(s.obs||'')+'</textarea></div>'
+    +'</div>';
+}
+
+function saveEditSegurado(){
+  const seg = getDB('segurados');
+  const idx = seg.findIndex(x=>x.id===currentSegId);
+  if(idx<0) return;
+  seg[idx].nome = document.getElementById('e-nome').value;
+  seg[idx].cpf = document.getElementById('e-cpf').value;
+  seg[idx].telefone = document.getElementById('e-tel').value;
+  seg[idx].email = document.getElementById('e-email').value;
+  seg[idx].tipo = document.getElementById('e-tipo').value;
+  seg[idx].seguradora = document.getElementById('e-seguradora').value;
+  seg[idx].apolice = document.getElementById('e-apolice').value;
+  seg[idx].valor = parseFloat(document.getElementById('e-valor').value)||0;
+  seg[idx].inicio = document.getElementById('e-inicio').value;
+  seg[idx].vencimento = document.getElementById('e-vencimento').value;
+  seg[idx].bem = document.getElementById('e-bem').value;
+  seg[idx].obs = document.getElementById('e-obs').value;
+  setDB('segurados',seg);
+  showToast('💾 Segurado atualizado!');
+  viewSegurado(currentSegId);
+  renderSegurados();
+}
+
+function cancelEditSegurado(){ viewSegurado(currentSegId); }
+
+function deleteSeguradoModal(){
+  if(!confirm('Apagar este segurado?')) return;
+  let seg = getDB('segurados').filter(s=>s.id!==currentSegId);
+  setDB('segurados',seg);
+  document.getElementById('modal-segurado').classList.remove('open');
+  renderSegurados();
+  showToast('🗑 Segurado removido.');
+}
+
+function uploadFile(segId){
+  const input = document.getElementById('seg-file-input');
+  if(!input.files.length) return;
+  const seg = getDB('segurados');
+  const idx = seg.findIndex(x=>x.id===segId);
+  if(idx<0) return;
+  if(!seg[idx].arquivos) seg[idx].arquivos = [];
+  let loaded = 0;
+  const total = input.files.length;
+  Array.from(input.files).forEach(file=>{
+    const reader = new FileReader();
+    reader.onload = function(ev){
+      seg[idx].arquivos.push({name:file.name, data:ev.target.result, date:new Date().toISOString()});
+      loaded++;
+      if(loaded===total){
+        setDB('segurados',seg);
+        showToast('📎 Arquivo(s) anexado(s)!');
+        viewSegurado(segId);
+      }
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+function removeFile(segId, fileIdx){
+  if(!confirm('Remover este arquivo?')) return;
+  const seg = getDB('segurados');
+  const idx = seg.findIndex(x=>x.id===segId);
+  if(idx<0) return;
+  seg[idx].arquivos.splice(fileIdx,1);
+  setDB('segurados',seg);
+  showToast('🗑 Arquivo removido.');
+  viewSegurado(segId);
+}
+
+// ============ DYNAMIC FIELDS PER TYPE (NOVO SEGURADO) ============
+const DYNF = {
+  auto: { t:'🚗 Dados do Veículo', f:[
+    {id:'d-placa',l:'Placa',ph:'AAA-0000'},
+    {id:'d-ano',l:'Ano',ph:'2022'},
+    {id:'d-marca',l:'Marca/Modelo',ph:'Ex: VW Polo',full:1},
+    {id:'d-cep',l:'CEP pernoite',ph:'00000-000'},
+    {id:'d-uso',l:'Uso do veículo',s:['Selecione...','Lazer','Trabalho','Aplicativo','Viagens']},
+    {id:'d-idade',l:'Idade condutor',ph:'32'},
+    {id:'d-hab',l:'Tempo habilitação',s:['Selecione...','< 2 anos','2-5 anos','5-10 anos','> 10 anos']},
+  ]},
+  residencial: { t:'🏠 Dados do Imóvel', f:[
+    {id:'d-tipoimov',l:'Tipo imóvel',s:['Selecione...','Casa','Apartamento','Chácara']},
+    {id:'d-prop',l:'Proprietário/Inquilino',s:['Selecione...','Proprietário','Inquilino']},
+    {id:'d-cepr',l:'CEP',ph:'00000-000'},
+    {id:'d-metr',l:'Metragem (m²)',ph:'90'},
+    {id:'d-valimov',l:'Valor estimado',s:['Selecione...','Até R$200k','R$200k-500k','R$500k-1M','Acima R$1M']},
+    {id:'d-cobres',l:'Coberturas',s:['Selecione...','Incêndio','Roubo','Danos elétricos','RC','Todas']},
+  ]},
+  empresarial: { t:'🏢 Dados da Empresa', f:[
+    {id:'d-razao',l:'Razão Social',ph:'Empresa Ltda.',full:1},
+    {id:'d-cnpj',l:'CNPJ',ph:'00.000.000/0000-00'},
+    {id:'d-segemp',l:'Segmento',s:['Selecione...','Comércio','Indústria','Serviços','Tecnologia','Outro']},
+    {id:'d-cepe',l:'CEP',ph:'00000-000'},
+    {id:'d-fat',l:'Faturamento',s:['Selecione...','Até R$360k','R$360k-1.2M','Acima R$1.2M']},
+  ]},
+  viagem: { t:'✈️ Dados da Viagem', f:[
+    {id:'d-dest',l:'Destino',ph:'Europa, EUA...'},
+    {id:'d-viaj',l:'Nº viajantes',s:['Selecione...','1','2','3','4','5+']},
+    {id:'d-saida',l:'Saída',tp:'date'},
+    {id:'d-retorno',l:'Retorno',tp:'date'},
+    {id:'d-motivo',l:'Motivo',s:['Selecione...','Turismo','Negócios','Intercâmbio']},
+  ]},
+  celular: { t:'📱 Dados do Celular', f:[
+    {id:'d-marcac',l:'Marca',s:['Selecione...','Apple','Samsung','Motorola','Xiaomi','Outra']},
+    {id:'d-modeloc',l:'Modelo',ph:'iPhone 14'},
+    {id:'d-valorc',l:'Valor (R$)',ph:'4500'},
+    {id:'d-nf',l:'Nota fiscal?',s:['Selecione...','Sim','Não']},
+  ]},
+  portateis: { t:'💻 Dados do Equipamento', f:[
+    {id:'d-tipoeq',l:'Tipo',s:['Selecione...','Notebook','Câmera','Tablet','Drone','Outro']},
+    {id:'d-marcaeq',l:'Marca/Modelo',ph:'MacBook Pro 2022'},
+    {id:'d-valoreq',l:'Valor (R$)',ph:'8000'},
+    {id:'d-usoeq',l:'Uso',s:['Selecione...','Pessoal','Profissional','Educação']},
+  ]}
+};
+
+function renderDynAdmin(){
+  const tipo = document.getElementById('s-tipo').value;
+  const box = document.getElementById('admin-dyn');
+  if(!tipo||!DYNF[tipo]){box.innerHTML='';return;}
+  const d = DYNF[tipo];
+  let h = '<div class="dyn-fields"><h4>'+d.t+'</h4><div class="form-grid">';
+  d.f.forEach(f=>{
+    const cls = f.full?'form-group form-full':'form-group';
+    let inp;
+    if(f.s) inp = '<select class="einp" id="'+f.id+'">'+f.s.map(o=>'<option>'+o+'</option>').join('')+'</select>';
+    else if(f.tp==='date') inp = '<input class="einp" type="date" id="'+f.id+'">';
+    else inp = '<input class="einp" type="text" id="'+f.id+'" placeholder="'+(f.ph||'')+'">';
+    h += '<div class="'+cls+'"><label>'+f.l+'</label>'+inp+'</div>';
+  });
+  h += '</div></div>';
+  box.innerHTML = h;
+}
+
+function collectDynAdmin(){
+  const tipo = document.getElementById('s-tipo').value;
+  if(!tipo||!DYNF[tipo]) return {};
+  const res = {};
+  DYNF[tipo].f.forEach(f=>{
+    const el = document.getElementById(f.id);
+    if(el&&el.value&&el.value!=='Selecione...') res[f.l] = el.value;
+  });
+  return res;
 }
 
 // ============ HELPERS ============
