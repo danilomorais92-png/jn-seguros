@@ -3,6 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-NJ2YJ8J43T"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-NJ2YJ8J43T');
+</script>
 <title>JN Seguros — Painel Administrativo</title>
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
@@ -207,9 +215,49 @@
     .chart-row{grid-template-columns:1fr;}
     .planos-grid{grid-template-columns:1fr;}
   }
+
+  /* ===== MOBILE FULL RESPONSIVE ===== */
+  @media(max-width:768px){
+    :root { --sidebar: 0px; }
+    .sidebar { width: 260px; transform: translateX(-100%); transition: transform .3s; }
+    .sidebar.mobile-open { transform: translateX(0); }
+    .main { margin-left: 0 !important; }
+    .topbar { padding: 12px 16px; }
+    .topbar-title { font-size: 1rem; }
+    .topbar-date { display: none; }
+    .page { padding: 16px; }
+    .stats-row { grid-template-columns: 1fr 1fr; gap: 12px; }
+    .stat-card { padding: 16px; }
+    .stat-card .value { font-size: 1.5rem; }
+    .table-header { padding: 14px 16px; flex-direction: column; align-items: flex-start; }
+    .table-actions { width: 100%; }
+    .search-input { width: 100%; }
+    th, td { padding: 10px 12px; font-size: 0.8rem; }
+    table { display: block; overflow-x: auto; white-space: nowrap; }
+    .modal-box { padding: 24px 16px; }
+    .detail-grid { grid-template-columns: 1fr; }
+    .detail-full { grid-column: auto; }
+    .form-panel { padding: 20px 16px; }
+    .plano-card { padding: 20px; }
+    /* Hamburger */
+    .hamburger { display: flex !important; }
+    .sidebar-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 45; }
+    .sidebar-overlay.active { display: block; }
+  }
+  .hamburger {
+    display: none;
+    align-items: center; justify-content: center;
+    width: 36px; height: 36px; cursor: pointer;
+    background: var(--bg); border: 1.5px solid var(--border);
+    border-radius: 8px; flex-direction: column; gap: 5px;
+  }
+  .hamburger span { width: 18px; height: 2px; background: var(--navy); border-radius: 2px; }
 </style>
 </head>
 <body>
+
+<!-- SIDEBAR OVERLAY -->
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
 
 <!-- LOGIN -->
 <div id="loginOverlay" style="position:fixed;inset:0;z-index:9999;background:linear-gradient(145deg,#0a1628 0%,#0f2145 45%,#0d2a5e 100%);display:flex;align-items:center;justify-content:center;">
@@ -278,7 +326,12 @@ if(sessionStorage.getItem('jn_admin_auth')==='1'){
 <!-- MAIN -->
 <div class="main">
   <div class="topbar">
-    <div class="topbar-title" id="page-title">Dashboard</div>
+    <div style="display:flex;align-items:center;gap:12px;">
+      <div class="hamburger" onclick="toggleSidebar()" title="Menu">
+        <span></span><span></span><span></span>
+      </div>
+      <div class="topbar-title" id="page-title">Dashboard</div>
+    </div>
     <div class="topbar-right">
       <span class="topbar-date" id="topbar-date"></span>
       <button class="topbar-refresh" id="refreshBtn" onclick="refreshAll()" title="Atualizar leads e dados">
@@ -419,8 +472,17 @@ if(sessionStorage.getItem('jn_admin_auth')==='1'){
           </div>
           <div class="form-group"><label>Seguradora</label><input type="text" id="s-seguradora" placeholder="Ex: Porto Seguro"></div>
           <div class="form-group"><label>Nº da Apólice</label><input type="text" id="s-apolice" placeholder="000000000"></div>
-          <div class="form-group"><label>Valor do Prêmio (R$)</label><input type="number" id="s-valor" placeholder="0.00" step="0.01"></div>
-          <div class="form-group"><label>Comissão (R$)</label><input type="number" id="s-comissao" placeholder="0.00" step="0.01"></div>
+          <div class="form-group"><label>Valor do Prêmio (R$)</label><input type="text" id="s-valor" placeholder="0,00" oninput="maskMoney(this)"></div>
+          <div class="form-group"><label>Tipo de Pagamento</label>
+            <select id="s-pagamento" onchange="renderComissaoAdmin()">
+              <option value="avista">À vista</option>
+              <option value="parcelado">Parcelado</option>
+            </select>
+          </div>
+          <div class="form-group"><label>Parcelas</label><input type="number" id="s-parcelas" placeholder="1" min="1" max="24" value="1" style="display:none" oninput="renderComissaoAdmin()"></div>
+          <div class="form-group"><label>Comissão % sobre o prêmio</label><input type="number" id="s-comissao-pct" placeholder="Ex: 20" step="0.01" oninput="renderComissaoAdmin()"></div>
+          <div class="form-group"><label>Comissão Total (R$) <span style="color:var(--muted);font-weight:400;font-size:0.75rem">calculado</span></label><input type="text" id="s-comissao" placeholder="0,00" oninput="maskMoney(this)" readonly style="background:#f0fdf4;color:var(--green);font-weight:700;"></div>
+          <div class="form-group"><label>Comissão por Parcela (R$)</label><input type="text" id="s-comissao-parcela" placeholder="0,00" readonly style="background:#f0fdf4;color:var(--muted);display:none;"></div>
           <div class="form-group"><label>Data de Início da Vigência *</label><input type="date" id="s-inicio" required></div>
           <div class="form-group"><label>Data de Vencimento *</label><input type="date" id="s-vencimento" required></div>
           <div class="form-full" id="admin-dyn"></div>
@@ -514,6 +576,14 @@ function seedIfEmpty(){
   }
 }
 
+// ============ MOBILE SIDEBAR ============
+function toggleSidebar(){
+  const sidebar = document.querySelector('.sidebar');
+  const overlay = document.getElementById('sidebarOverlay');
+  sidebar.classList.toggle('mobile-open');
+  overlay.classList.toggle('active');
+}
+
 // ============ REFRESH ============
 function refreshAll(){
   const btn = document.getElementById('refreshBtn');
@@ -561,6 +631,10 @@ function showPage(id, btn){
   const titles={dashboard:'Dashboard',leads:'Leads',segurados:'Segurados',vencimentos:'Vencimentos','novo-segurado':'Novo Segurado',historico:'Histórico',planos:'Planos & Promoções'};
   document.getElementById('page-title').textContent = titles[id]||id;
   renderPage(id);
+  // Close mobile sidebar
+  const sidebar = document.querySelector('.sidebar');
+  const overlay = document.getElementById('sidebarOverlay');
+  if(sidebar.classList.contains('mobile-open')){ sidebar.classList.remove('mobile-open'); overlay.classList.remove('active'); }
 }
 function renderPage(id){
   if(id==='dashboard') renderDashboard();
@@ -959,13 +1033,17 @@ function savePlanos(){
 // ============ NOVO SEGURADO ============
 function saveSegurado(e){
   e.preventDefault();
+  const pagamento = document.getElementById('s-pagamento').value;
+  const parcelas = parseInt(document.getElementById('s-parcelas').value)||1;
   const s = {
     id:Date.now(), nome:document.getElementById('s-nome').value,
     cpf:document.getElementById('s-cpf').value, telefone:document.getElementById('s-tel').value,
     email:document.getElementById('s-email').value, tipo:document.getElementById('s-tipo').value,
     seguradora:document.getElementById('s-seguradora').value, apolice:document.getElementById('s-apolice').value,
-    valor:parseFloat(document.getElementById('s-valor').value)||0,
-    comissao:parseFloat(document.getElementById('s-comissao').value)||0,
+    valor:parseMoney(document.getElementById('s-valor').value),
+    comissao:parseMoney(document.getElementById('s-comissao').value),
+    comissaoPct:parseFloat(document.getElementById('s-comissao-pct').value)||0,
+    pagamento:pagamento, parcelas:pagamento==='parcelado'?parcelas:1,
     inicio:document.getElementById('s-inicio').value, vencimento:document.getElementById('s-vencimento').value,
     bem:document.getElementById('s-bem').value, obs:document.getElementById('s-obs').value,
     status:'ativo', dynamicData:collectDynAdmin(), arquivos:[]
@@ -975,6 +1053,10 @@ function saveSegurado(e){
   setDB('segurados',seg);
   e.target.reset();
   document.getElementById('admin-dyn').innerHTML='';
+  // Reset comissao display
+  document.getElementById('s-comissao').value='';
+  document.getElementById('s-comissao-parcela').style.display='none';
+  document.getElementById('s-parcelas').style.display='none';
   showToast('💾 Segurado salvo com sucesso!');
   setTimeout(()=>showPage('segurados',null),1500);
 }
@@ -1032,7 +1114,9 @@ function viewSegurado(id){
     +`<div><div class="dlabel">Seguradora</div><div class="dval">${s.seguradora||'-'}</div></div>`
     +`<div><div class="dlabel">Nº Apólice</div><div class="dval">${s.apolice||'-'}</div></div>`
     +`<div><div class="dlabel">Valor Prêmio</div><div class="dval">R$ ${(s.valor||0).toFixed(2)}</div></div>`
-    +`<div><div class="dlabel">Comissão</div><div class="dval" style="color:var(--success);font-weight:800">R$ ${(s.comissao||0).toFixed(2)}</div></div>`
+    +`<div><div class="dlabel">Comissão Total</div><div class="dval" style="color:var(--success);font-weight:800">R$ ${(s.comissao||0).toFixed(2)}</div></div>`
+    +`<div><div class="dlabel">Pagamento</div><div class="dval">${s.pagamento==='parcelado'?'💳 Parcelado em '+s.parcelas+'x':'💰 À vista'}</div></div>`
+    +`<div><div class="dlabel">Comissão por Parcela</div><div class="dval" style="color:var(--muted)">${s.pagamento==='parcelado'?'R$ '+((s.comissao||0)/(s.parcelas||1)).toFixed(2)+' / mês':'—'}</div></div>`
     +`<div><div class="dlabel">Vigência</div><div class="dval">${formatDate(s.inicio)} a ${formatDate(s.vencimento)}</div></div>`
     +`<div class="detail-full"><div class="dlabel">Bem Segurado</div><div class="dval">${s.bem||'-'}</div></div>`
     +dynHtml
@@ -1115,12 +1199,23 @@ function uploadFile(segId){
   if(idx<0) return;
   if(!seg[idx].arquivos) seg[idx].arquivos=[];
   let loaded=0; const total=input.files.length;
+  const MAX_SIZE = 4 * 1024 * 1024; // 4MB limit per file
   Array.from(input.files).forEach(file=>{
+    if(file.size > MAX_SIZE){
+      showToast('⚠️ Arquivo ' + file.name + ' é muito grande (máx 4MB).');
+      loaded++;
+      if(loaded===total){ renderFileList(seg, idx, segId); }
+      return;
+    }
     const reader = new FileReader();
     reader.onload = function(ev){
       seg[idx].arquivos.push({name:file.name,data:ev.target.result,date:new Date().toISOString()});
       loaded++;
-      if(loaded===total){ setDB('segurados',seg); showToast('📎 Arquivo(s) anexado(s)!'); viewSegurado(segId); }
+      if(loaded===total){
+        setDB('segurados',seg);
+        showToast('📎 Arquivo(s) anexado(s) e salvos!');
+        viewSegurado(segId);
+      }
     };
     reader.readAsDataURL(file);
   });
@@ -1135,6 +1230,33 @@ function removeFile(segId,fileIdx){
   setDB('segurados',seg);
   showToast('🗑 Arquivo removido.');
   viewSegurado(segId);
+}
+
+// ============ MONEY MASK ============
+function maskMoney(el){
+  let v = el.value.replace(/\D/g,'');
+  if(!v){ el.value=''; return; }
+  v = (parseInt(v)/100).toFixed(2);
+  v = v.replace('.',',').replace(/\B(?=(\d{3})+(?!\d))/g,'.');
+  el.value = v;
+}
+function parseMoney(str){ if(!str) return 0; return parseFloat(str.replace(/\./g,'').replace(',','.'))||0; }
+
+function renderComissaoAdmin(){
+  const valorStr = document.getElementById('s-valor').value;
+  const pct = parseFloat(document.getElementById('s-comissao-pct').value)||0;
+  const pagamento = document.getElementById('s-pagamento').value;
+  const parcelasEl = document.getElementById('s-parcelas');
+  const comissaoParcelaEl = document.getElementById('s-comissao-parcela');
+  parcelasEl.style.display = pagamento==='parcelado' ? '' : 'none';
+  comissaoParcelaEl.style.display = pagamento==='parcelado' ? '' : 'none';
+  const valor = parseMoney(valorStr);
+  const totalComissao = (valor * pct / 100);
+  const parcelas = pagamento==='parcelado' ? (parseInt(parcelasEl.value)||1) : 1;
+  const comissaoParcela = totalComissao / parcelas;
+  // Format
+  document.getElementById('s-comissao').value = totalComissao.toFixed(2).replace('.',',');
+  comissaoParcelaEl.value = comissaoParcela.toFixed(2).replace('.',',') + ' / parcela';
 }
 
 // ============ DYNAMIC FIELDS ============

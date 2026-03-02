@@ -3,6 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-NJ2YJ8J43T"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-NJ2YJ8J43T');
+</script>
 <title>JN Seguros | Consultoria de Seguros</title>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
@@ -259,6 +267,21 @@
   .span-full { grid-column: 1/-1; }
   @keyframes fadeUp { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
 
+  /* ===== SOS SECTION ===== */
+  .sos-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; }
+  .sos-card { background: var(--white); border: 1.5px solid var(--gray-200); border-radius: 16px; padding: 20px; transition: all .2s; }
+  .sos-card:hover { border-color: var(--blue-400); box-shadow: 0 8px 24px rgba(37,99,235,0.1); }
+  .sos-seg-name { font-family: 'Sora', sans-serif; font-size: 0.95rem; font-weight: 700; color: var(--blue-900); margin-bottom: 14px; padding-bottom: 10px; border-bottom: 1px solid var(--gray-100); }
+  .sos-items { display: flex; flex-direction: column; gap: 8px; }
+  .sos-item { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+  .sos-type { font-size: 0.78rem; color: var(--gray-500); flex: 1; }
+  .sos-phone { font-size: 0.88rem; font-weight: 700; color: var(--blue-600); text-decoration: none; white-space: nowrap; transition: color .2s; }
+  .sos-phone:hover { color: var(--blue-400); }
+
+  @media (max-width: 768px) {
+    #indique > .section-inner > div { grid-template-columns: 1fr !important; gap: 40px !important; }
+  }
+
   /* ===== FOOTER ===== */
   footer { background: var(--blue-900); color: rgba(255,255,255,0.5); padding: 48px; text-align: center; font-size: 0.85rem; line-height: 1.9; }
   .foot-logo { display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 12px; }
@@ -416,6 +439,8 @@
     <li><a href="#servicos">Seguros</a></li>
     <li><a href="#parceiros">Parceiras</a></li>
     <li><a href="#planos">Planos</a></li>
+    <li><a href="#sos">SOS 24h</a></li>
+    <li><a href="#indique">Indique</a></li>
     <li><a href="#contato">Contato</a></li>
   </ul>
   <button class="nav-cta" onclick="openModal()">Solicitar Cotação</button>
@@ -590,6 +615,146 @@
         <p class="plan-desc">Cobertura total para quem quer segurança máxima para tudo e todos.</p>
         <ul class="plan-features"><li>Auto + Residencial + Empresarial</li><li>Viagem + Celular + Portáteis</li><li>Atendimento VIP prioritário</li><li>Gestão completa de sinistros</li></ul>
         <button class="btn-plan" onclick="openPlanModal('premium')">Solicitar cotação</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SOS ASSISTÊNCIA 24H -->
+<section id="sos" style="background: var(--gray-50);">
+  <div class="section-inner">
+    <div class="section-header">
+      <div class="section-eyebrow">🆘 Emergências</div>
+      <h2 class="section-heading">SOS — Assistência 24 Horas</h2>
+      <p class="section-sub">Telefones de assistência direta das principais seguradoras. Ligue quando precisar, a qualquer hora do dia ou da noite.</p>
+    </div>
+    <div class="sos-grid" id="sos-grid">
+      <div class="sos-card">
+        <div class="sos-seg-name">🔵 Azul Seguros</div>
+        <div class="sos-items">
+          <div class="sos-item"><span class="sos-type">Sinistro (Capitais)</span><a href="tel:40043700" class="sos-phone">4004 3700</a></div>
+          <div class="sos-item"><span class="sos-type">Sinistro (Demais)</span><a href="tel:08007030203" class="sos-phone">0800 703 0203</a></div>
+          <div class="sos-item"><span class="sos-type">Assistência Auto 24h</span><a href="tel:03001232985" class="sos-phone">0300 123 2985</a></div>
+          <div class="sos-item"><span class="sos-type">SAC</span><a href="tel:08007031280" class="sos-phone">0800 703 1280</a></div>
+        </div>
+      </div>
+      <div class="sos-card">
+        <div class="sos-seg-name">🔷 Allianz Seguros</div>
+        <div class="sos-items">
+          <div class="sos-item"><span class="sos-type">Sinistro (Capitais)</span><a href="tel:40901110" class="sos-phone">4090 1110</a></div>
+          <div class="sos-item"><span class="sos-type">Sinistro (Demais)</span><a href="tel:08007777243" class="sos-phone">0800 777 7243</a></div>
+          <div class="sos-item"><span class="sos-type">Assistência Auto 24h</span><a href="tel:0800130700" class="sos-phone">0800 130 700</a></div>
+        </div>
+      </div>
+      <div class="sos-card">
+        <div class="sos-seg-name">🟠 Porto Seguro</div>
+        <div class="sos-items">
+          <div class="sos-item"><span class="sos-type">Sinistro e Assist. 24h (SP)</span><a href="tel:33376786" class="sos-phone">3337 6786</a></div>
+          <div class="sos-item"><span class="sos-type">Sinistro e Assist. 24h (0800)</span><a href="tel:08007270800" class="sos-phone">0800 727 0800</a></div>
+          <div class="sos-item"><span class="sos-type">SAC</span><a href="tel:08007272766" class="sos-phone">0800 7272 766</a></div>
+        </div>
+      </div>
+      <div class="sos-card">
+        <div class="sos-seg-name">🟡 Bradesco Seguros</div>
+        <div class="sos-items">
+          <div class="sos-item"><span class="sos-type">Sinistro (Capitais)</span><a href="tel:40042757" class="sos-phone">4004 2757</a></div>
+          <div class="sos-item"><span class="sos-type">Sinistro (Demais)</span><a href="tel:08007012757" class="sos-phone">0800 701 2757</a></div>
+          <div class="sos-item"><span class="sos-type">SAC</span><a href="tel:08007279966" class="sos-phone">0800 727 9966</a></div>
+        </div>
+      </div>
+      <div class="sos-card">
+        <div class="sos-seg-name">🟢 SulAmérica Seguros</div>
+        <div class="sos-items">
+          <div class="sos-item"><span class="sos-type">Sinistro e Assist. 24h (Capitais)</span><a href="tel:40044100" class="sos-phone">4004 4100</a></div>
+          <div class="sos-item"><span class="sos-type">Sinistro e Assist. 24h (Demais)</span><a href="tel:08007274100" class="sos-phone">0800 727 4100</a></div>
+          <div class="sos-item"><span class="sos-type">SAC</span><a href="tel:08007255901" class="sos-phone">0800 725 5901</a></div>
+        </div>
+      </div>
+      <div class="sos-card">
+        <div class="sos-seg-name">🔴 Mapfre Seguros</div>
+        <div class="sos-items">
+          <div class="sos-item"><span class="sos-type">Sinistro e Assist. (Capitais)</span><a href="tel:40040101" class="sos-phone">4004 0101</a></div>
+          <div class="sos-item"><span class="sos-type">Sinistro e Assist. (Demais)</span><a href="tel:08007050101" class="sos-phone">0800 705 0101</a></div>
+          <div class="sos-item"><span class="sos-type">SAC</span><a href="tel:08007754545" class="sos-phone">0800 775 4545</a></div>
+        </div>
+      </div>
+      <div class="sos-card">
+        <div class="sos-seg-name">🔵 HDI Seguros</div>
+        <div class="sos-items">
+          <div class="sos-item"><span class="sos-type">Assist. Auto 24h (Regiões Metro)</span><a href="tel:30035390" class="sos-phone">3003 5390</a></div>
+          <div class="sos-item"><span class="sos-type">Assist. Auto 24h (Demais)</span><a href="tel:08004344340" class="sos-phone">0800 434 4340</a></div>
+          <div class="sos-item"><span class="sos-type">SAC</span><a href="tel:08007227149" class="sos-phone">0800 722 7149</a></div>
+        </div>
+      </div>
+      <div class="sos-card">
+        <div class="sos-seg-name">⚫ Tokio Marine</div>
+        <div class="sos-items">
+          <div class="sos-item"><span class="sos-type">Sinistro</span><a href="tel:03003386546" class="sos-phone">0300 33 86546</a></div>
+          <div class="sos-item"><span class="sos-type">Assist. Auto 24h</span><a href="tel:08003186546" class="sos-phone">0800 31 86546</a></div>
+          <div class="sos-item"><span class="sos-type">Assist. Residência 24h</span><a href="tel:08003086546" class="sos-phone">0800 30 86546</a></div>
+        </div>
+      </div>
+    </div>
+    <div style="margin-top:32px;text-align:center;">
+      <p style="color:var(--gray-500);font-size:0.88rem;">Não encontrou sua seguradora? <strong>Entre em contato conosco pelo WhatsApp</strong> e te ajudamos imediatamente.</p>
+      <a href="https://wa.me/5511987886129" target="_blank" class="btn-blue" style="display:inline-block;margin-top:14px;text-decoration:none;">💬 Falar com a JN Seguros agora</a>
+    </div>
+  </div>
+</section>
+
+<!-- INDIQUE UM AMIGO -->
+<section id="indique" style="background: var(--blue-900);">
+  <div class="section-inner">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:72px;align-items:center;">
+      <div>
+        <div class="section-eyebrow" style="color:var(--blue-400)">🤝 Programa de Indicação</div>
+        <h2 class="section-heading" style="color:var(--white)">Indique um amigo<br>e ganhe <em style="color:var(--blue-400)">benefícios!</em></h2>
+        <p style="color:rgba(255,255,255,0.65);font-size:0.97rem;line-height:1.75;margin-bottom:28px;">Conhece alguém que precisa de seguro? Indique para a JN Seguros! Quando seu indicado contratar, você e ele ganham vantagens exclusivas.</p>
+        <div style="display:flex;flex-direction:column;gap:16px;">
+          <div style="display:flex;gap:16px;align-items:flex-start;">
+            <div style="width:44px;height:44px;background:rgba(37,99,235,0.25);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0;">🎁</div>
+            <div><strong style="color:var(--white);display:block;margin-bottom:4px;">Vantagens para você</strong><span style="color:rgba(255,255,255,0.55);font-size:0.88rem;">Desconto especial na sua próxima renovação ou cashback em serviços.</span></div>
+          </div>
+          <div style="display:flex;gap:16px;align-items:flex-start;">
+            <div style="width:44px;height:44px;background:rgba(37,99,235,0.25);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0;">🌟</div>
+            <div><strong style="color:var(--white);display:block;margin-bottom:4px;">Vantagens para seu indicado</strong><span style="color:rgba(255,255,255,0.55);font-size:0.88rem;">Consultoria prioritária e condições especiais na contratação.</span></div>
+          </div>
+          <div style="display:flex;gap:16px;align-items:flex-start;">
+            <div style="width:44px;height:44px;background:rgba(37,99,235,0.25);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0;">⚡</div>
+            <div><strong style="color:var(--white);display:block;margin-bottom:4px;">Processo simples e rápido</strong><span style="color:rgba(255,255,255,0.55);font-size:0.88rem;">Preencha o formulário e deixamos o resto por nossa conta.</span></div>
+          </div>
+        </div>
+      </div>
+      <div style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:24px;padding:36px;">
+        <h4 style="font-family:'Sora',sans-serif;font-size:1.15rem;color:var(--white);font-weight:700;margin-bottom:6px;">Formulário de Indicação</h4>
+        <p style="color:rgba(255,255,255,0.45);font-size:0.82rem;margin-bottom:24px;">Preencha os dados de quem indica e do indicado.</p>
+        <div id="indicacaoForm">
+          <div style="background:rgba(255,255,255,0.08);border-radius:10px;padding:14px 16px;margin-bottom:16px;">
+            <div style="font-size:0.7rem;font-weight:800;text-transform:uppercase;letter-spacing:2px;color:var(--blue-400);margin-bottom:12px;">Quem Indica</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+              <div class="form-group"><input type="text" id="ind_qui_nome" placeholder="Seu nome" style="background:rgba(255,255,255,0.08);border-color:rgba(255,255,255,0.15);color:white;"></div>
+              <div class="form-group"><input type="tel" id="ind_qui_tel" placeholder="Seu telefone" style="background:rgba(255,255,255,0.08);border-color:rgba(255,255,255,0.15);color:white;"></div>
+            </div>
+          </div>
+          <div style="background:rgba(255,255,255,0.08);border-radius:10px;padding:14px 16px;margin-bottom:20px;">
+            <div style="font-size:0.7rem;font-weight:800;text-transform:uppercase;letter-spacing:2px;color:#f59e0b;margin-bottom:12px;">Indicado</div>
+            <div class="form-group" style="margin-bottom:12px;"><input type="text" id="ind_nom" placeholder="Nome do indicado" style="background:rgba(255,255,255,0.08);border-color:rgba(255,255,255,0.15);color:white;"></div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
+              <div class="form-group"><input type="tel" id="ind_tel" placeholder="Telefone" style="background:rgba(255,255,255,0.08);border-color:rgba(255,255,255,0.15);color:white;"></div>
+              <div class="form-group"><input type="email" id="ind_email" placeholder="E-mail" style="background:rgba(255,255,255,0.08);border-color:rgba(255,255,255,0.15);color:white;"></div>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+              <div class="form-group"><select id="ind_tipo" style="background:rgba(255,255,255,0.08);border-color:rgba(255,255,255,0.15);color:white;"><option value="">Tipo do Seguro</option><option>🚗 Auto</option><option>🏠 Residencial</option><option>🏢 Empresarial</option><option>✈️ Viagem</option><option>📱 Celular</option><option>💻 Portáteis</option></select></div>
+              <div class="form-group"><select id="ind_contato" style="background:rgba(255,255,255,0.08);border-color:rgba(255,255,255,0.15);color:white;"><option value="">Melhor contato</option><option>WhatsApp</option><option>Ligação</option><option>E-mail</option></select></div>
+            </div>
+          </div>
+          <button onclick="enviarIndicacao()" style="width:100%;padding:14px;background:var(--blue-500);color:white;border:none;border-radius:10px;font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;font-size:0.95rem;cursor:pointer;transition:all .2s;" onmouseover="this.style.background='#1d4ed8'" onmouseout="this.style.background='var(--blue-500)'">Enviar Indicação →</button>
+        </div>
+        <div id="indicacaoSuccess" style="display:none;text-align:center;padding:24px 0;">
+          <div style="font-size:3rem;margin-bottom:12px;">🎉</div>
+          <h4 style="color:var(--white);font-family:'Sora',sans-serif;margin-bottom:8px;">Indicação enviada!</h4>
+          <p style="color:rgba(255,255,255,0.55);font-size:0.88rem;">Entraremos em contato com seu indicado em breve. Obrigado!</p>
+        </div>
       </div>
     </div>
   </div>
@@ -1031,7 +1196,23 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeModal
 
 
 
-// ===== WHATSAPP MODAL =====
+// ===== INDICAÇÃO =====
+function enviarIndicacao() {
+  const quinome = document.getElementById('ind_qui_nome').value.trim();
+  const quitel = document.getElementById('ind_qui_tel').value.trim();
+  const nome = document.getElementById('ind_nom').value.trim();
+  const tel = document.getElementById('ind_tel').value.trim();
+  if (!quinome || !nome || !tel) { alert('Preencha pelo menos: seu nome, nome e telefone do indicado.'); return; }
+  const email = document.getElementById('ind_email').value.trim();
+  const tipo = document.getElementById('ind_tipo').value;
+  const contato = document.getElementById('ind_contato').value;
+  const msg = encodeURIComponent(`Olá! Quero indicar um amigo para a JN Seguros.\n\nQuem indica: ${quinome} (${quitel})\n\nIndicado:\nNome: ${nome}\nTelefone: ${tel}${email?'\nEmail: '+email:''}${tipo?'\nTipo de seguro: '+tipo:''}${contato?'\nMelhor contato: '+contato:''}`);
+  window.open(`https://wa.me/5511987886129?text=${msg}`, '_blank');
+  document.getElementById('indicacaoForm').style.display = 'none';
+  document.getElementById('indicacaoSuccess').style.display = 'block';
+}
+
+
 let selectedWaTopic = '';
 
 function openWaModal() {
@@ -1077,6 +1258,7 @@ Assunto: ${selectedWaTopic}`);
 
 </script>
 
+<!-- ADMIN LINK -->
 <p style="text-align:center;font-size:0.7rem;margin-top:6px;opacity:0.4;">
   <a href="admin.html" id="adminLink" style="color:inherit;text-decoration:none;">Painel Admin</a>
 </p>
@@ -1115,9 +1297,6 @@ Assunto: ${selectedWaTopic}`);
       </div>
       <button class="btn-submit" id="planModalBtn" onclick="sendPlanForm()">Solicitar cotação do plano →</button>
       <p class="form-note">🔒 Dados protegidos pela LGPD. Sem spam.</p>
-<<<<<<< HEAD
-      <div class="su
-=======
       <div class="success-msg" id="planModalSuccess" style="display:none;">
         <div class="check">✅</div>
         <h4>Recebemos sua solicitação!</h4>
@@ -1162,4 +1341,3 @@ Assunto: ${selectedWaTopic}`);
 
 </body>
 </html>
->>>>>>> 61759d1 (Primeiro deploy do site JN Seguros novo)
