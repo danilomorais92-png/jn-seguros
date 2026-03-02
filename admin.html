@@ -294,7 +294,7 @@ if(sessionStorage.getItem('jn_admin_auth')==='1'){
       <div class="stat-card"><div class="label">Total de Leads</div><div class="value" id="stat-leads">0</div><div class="change up" id="stat-leads-new"></div></div>
       <div class="stat-card"><div class="label">Segurados Ativos</div><div class="value" id="stat-seg">0</div><div class="change up">✓ Em vigor</div></div>
       <div class="stat-card"><div class="label">Vencimentos Próximos</div><div class="value" id="stat-venc">0</div><div class="change warn" id="stat-venc-warn"></div></div>
-      <div class="stat-card"><div class="label">Receita Mensal Est.</div><div class="value" id="stat-rec">R$0</div><div class="change up">Prêmios ativos</div></div>
+      <div class="stat-card"><div class="label">Comissão Mensal Est.</div><div class="value" id="stat-rec">R$0</div><div class="change up" id="stat-rec-change">Segurados ativos</div></div>
     </div>
     <div id="dashboard-alerts"></div>
     <div class="chart-row">
@@ -345,13 +345,33 @@ if(sessionStorage.getItem('jn_admin_auth')==='1'){
 
   <!-- VENCIMENTOS -->
   <div class="page" id="page-vencimentos">
-    <div class="table-wrapper">
+    <div class="table-wrapper" style="margin-bottom:24px">
       <div class="table-header">
-        <h3>⏰ Vencimentos nos próximos 30 dias</h3>
+        <h3>⏰ Vencimentos — Próximos 30 dias</h3>
+        <div class="table-actions">
+          <select id="venc-filter" onchange="renderVencimentos()" style="padding:7px 12px;border:1.5px solid var(--border);border-radius:8px;font-family:inherit;font-size:0.85rem;">
+            <option value="todos">Todos</option>
+            <option value="7">Urgente (7 dias)</option>
+            <option value="15">Atenção (15 dias)</option>
+            <option value="30">30 dias</option>
+          </select>
+        </div>
       </div>
       <table>
-        <thead><tr><th>Segurado</th><th>WhatsApp</th><th>Tipo</th><th>Vencimento</th><th>Dias Restantes</th><th>Contato</th><th>Ação</th></tr></thead>
+        <thead><tr><th>Segurado</th><th>WhatsApp</th><th>Tipo</th><th>Vencimento</th><th>Dias</th><th>Último Contato</th><th>Contato</th><th>Ação</th></tr></thead>
         <tbody id="vencimentos-tbody"></tbody>
+      </table>
+    </div>
+    <div class="table-wrapper">
+      <div class="table-header">
+        <h3>📋 Histórico de Vencimentos Excluídos</h3>
+        <div class="table-actions">
+          <button class="btn-sm btn-red" onclick="clearVencHistorico()">🗑 Limpar</button>
+        </div>
+      </div>
+      <table>
+        <thead><tr><th>Segurado</th><th>Tipo</th><th>Vencimento</th><th>Motivo</th><th>Data Exclusão</th></tr></thead>
+        <tbody id="venc-hist-tbody"></tbody>
       </table>
     </div>
   </div>
@@ -400,6 +420,7 @@ if(sessionStorage.getItem('jn_admin_auth')==='1'){
           <div class="form-group"><label>Seguradora</label><input type="text" id="s-seguradora" placeholder="Ex: Porto Seguro"></div>
           <div class="form-group"><label>Nº da Apólice</label><input type="text" id="s-apolice" placeholder="000000000"></div>
           <div class="form-group"><label>Valor do Prêmio (R$)</label><input type="number" id="s-valor" placeholder="0.00" step="0.01"></div>
+          <div class="form-group"><label>Comissão (R$)</label><input type="number" id="s-comissao" placeholder="0.00" step="0.01"></div>
           <div class="form-group"><label>Data de Início da Vigência *</label><input type="date" id="s-inicio" required></div>
           <div class="form-group"><label>Data de Vencimento *</label><input type="date" id="s-vencimento" required></div>
           <div class="form-full" id="admin-dyn"></div>
@@ -563,8 +584,9 @@ document.addEventListener('keydown',e=>{ if(e.key==='Escape'){ document.querySel
 function renderDashboard(){
   const leads = getDB('leads');
   const seg = getDB('segurados');
-  const proxVenc = seg.filter(s=>{ const d=daysLeft(s.vencimento); return d>=0&&d<=30; });
-  const rec = seg.filter(s=>s.status==='ativo').reduce((a,s)=>a+(s.valor||0),0);
+  const vencDataDB = getConf('venc_contatos',{}); const excDB=getConf('venc_excluidos',[]); const excIds=excDB.map(x=>x.id);
+  const proxVenc = seg.filter(s=>{ const d=daysLeft(s.vencimento); if(d<0||d>30||excIds.includes(s.id)) return false; const vc=vencDataDB[s.id]; if(vc&&vc.proximoContato){ const hoje=new Date();hoje.setHours(0,0,0,0); if(new Date(vc.proximoContato)>hoje) return false; } return true; });
+  const rec = seg.filter(s=>s.status==='ativo').reduce((a,s)=>a+(s.comissao||0),0);
   const novosLeads = leads.filter(l=>!l.contatoFeito);
   document.getElementById('stat-leads').textContent = leads.length;
   document.getElementById('stat-leads-new').textContent = novosLeads.length + ' novos para contato';
@@ -611,8 +633,9 @@ function renderLeads(){
   const tbody = document.getElementById('leads-tbody');
   if(!leads.length){ tbody.innerHTML='<tr><td colspan="7" style="text-align:center;color:var(--muted);padding:40px">Nenhum lead cadastrado ainda.<br><span style="font-size:0.82rem">Os leads do site aparecerão aqui automaticamente quando o site usar o mesmo localStorage.</span></td></tr>'; return; }
   tbody.innerHTML = leads.slice().reverse().map(l=>{
+    const planNomes = {essencial:'Essencial',familia:'Família',premium:'Premium'};
     const origemBadge = l.plano
-      ? `<span class="lead-plano-badge lead-plano-${l.plano}">📦 ${l.plano.charAt(0).toUpperCase()+l.plano.slice(1)}</span>`
+      ? `<span class="lead-plano-badge lead-plano-${l.plano}">📦 Pacote ${planNomes[l.plano]||l.plano}</span>`
       : `<span class="lead-plano-badge lead-plano-site">🌐 Site</span>`;
     return `<tr>
       <td><strong>${l.nome}</strong></td>
@@ -742,45 +765,96 @@ function deleteSegurado(id){
 // ============ VENCIMENTOS ============
 function renderVencimentos(){
   const segurados = getDB('segurados');
-  const hidden = getDB('venc_hidden')||[];
-  const proximos = segurados.filter(s=>{ const d=daysLeft(s.vencimento); return d>=0&&d<=30&&!hidden.includes(s.id); });
-  const tbody = document.getElementById('vencimentos-tbody');
-  if(!proximos.length){ tbody.innerHTML='<tr><td colspan="7" style="text-align:center;color:var(--muted);padding:40px">Nenhum vencimento pendente nos próximos 30 dias. ✅</td></tr>'; return; }
-  tbody.innerHTML = proximos.sort((a,b)=>new Date(a.vencimento)-new Date(b.vencimento)).map(s=>{
+  const vencData = getConf('venc_contatos',{});   // {segId: {data, proximoContato}}
+  const excluidos = getConf('venc_excluidos',[]);  // ids excluídos permanentemente
+  const filterEl = document.getElementById('venc-filter');
+  const filterDias = filterEl ? parseInt(filterEl.value)||30 : 30;
+  const proximos = segurados.filter(s=>{
     const d = daysLeft(s.vencimento);
-    return `<tr>
-      <td><strong>${s.nome}</strong></td>
-      <td><a href="https://wa.me/55${(s.telefone||'').replace(/\D/g,'')}" target="_blank" style="color:var(--success);text-decoration:none">📱 ${s.telefone}</a></td>
-      <td>${tipoLabel(s.tipo)}</td>
-      <td>${formatDate(s.vencimento)}</td>
-      <td><span class="stat-badge ${d<=7?'badge-danger':d<=15?'badge-gold':'badge-info'}">${d} dias</span></td>
-      <td><button class="btn-sm btn-green" onclick="contatarVenc(${s.id})">✅ Registrar Contato</button></td>
-      <td><button class="btn-sm btn-red" onclick="excluirVenc(${s.id})">🗑</button></td>
-    </tr>`;
-  }).join('');
+    const excluido = excluidos.find(x=>x.id===s.id);
+    if(excluido) return false;
+    // Se fez contato, só mostra de novo quando chegar no próximoContato
+    const vc = vencData[s.id];
+    if(vc && vc.proximoContato){
+      const hoje = new Date(); hoje.setHours(0,0,0,0);
+      const prox = new Date(vc.proximoContato);
+      if(prox > hoje) return false;
+    }
+    return d >= 0 && d <= (filterEl&&filterEl.value!=='todos'?filterDias:30);
+  });
+  const tbody = document.getElementById('vencimentos-tbody');
+  if(!proximos.length){
+    tbody.innerHTML='<tr><td colspan="8" style="text-align:center;color:var(--muted);padding:40px">Nenhum vencimento pendente. ✅</td></tr>';
+  } else {
+    tbody.innerHTML = proximos.sort((a,b)=>new Date(a.vencimento)-new Date(b.vencimento)).map(s=>{
+      const d = daysLeft(s.vencimento);
+      const vc = vencData[s.id];
+      const ultimoContato = vc ? `<span style="font-size:0.78rem;color:var(--success)">✅ ${new Date(vc.data).toLocaleDateString('pt-BR')}</span><br><span style="font-size:0.72rem;color:var(--muted)">Retorno: ${new Date(vc.proximoContato).toLocaleDateString('pt-BR')}</span>` : '<span style="color:var(--muted);font-size:0.8rem">—</span>';
+      return `<tr>
+        <td><strong>${s.nome}</strong></td>
+        <td><a href="https://wa.me/55${(s.telefone||'').replace(/\D/g,'')}" target="_blank" style="color:var(--success);text-decoration:none">📱 ${s.telefone}</a></td>
+        <td>${tipoLabel(s.tipo)}</td>
+        <td>${formatDate(s.vencimento)}</td>
+        <td><span class="stat-badge ${d<=7?'badge-danger':d<=15?'badge-gold':'badge-info'}">${d}d</span></td>
+        <td>${ultimoContato}</td>
+        <td><button class="btn-sm btn-green" onclick="contatarVenc(${s.id})">✅ Registrar Contato</button></td>
+        <td><button class="btn-sm btn-red" onclick="excluirVenc(${s.id})" title="Excluir da lista">🗑</button></td>
+      </tr>`;
+    }).join('');
+  }
+  // Render histórico excluídos
+  const histTbody = document.getElementById('venc-hist-tbody');
+  if(histTbody){
+    if(!excluidos.length){
+      histTbody.innerHTML='<tr><td colspan="5" style="text-align:center;color:var(--muted);padding:24px">Nenhum registro excluído.</td></tr>';
+    } else {
+      histTbody.innerHTML = excluidos.slice().reverse().map(x=>`<tr>
+        <td><strong>${x.nome}</strong></td>
+        <td>${x.tipo}</td>
+        <td>${x.vencimento}</td>
+        <td><span class="stat-badge badge-gray">${x.motivo}</span></td>
+        <td>${new Date(x.dataExclusao).toLocaleDateString('pt-BR')}</td>
+      </tr>`).join('');
+    }
+  }
 }
 
 function contatarVenc(id){
   const seg = getDB('segurados');
   const s = seg.find(x=>x.id===id);
   if(!s) return;
+  // Salva no histórico geral
   const hist = getDB('historico');
-  hist.push({id:Date.now(),nome:s.nome,tipo:tipoLabel(s.tipo),acao:'Contato de renovação',data:new Date().toISOString(),obs:'Vencimento: '+formatDate(s.vencimento)});
+  const hoje = new Date();
+  hist.push({id:Date.now(),nome:s.nome,tipo:tipoLabel(s.tipo),acao:'Contato de renovação',data:hoje.toISOString(),obs:'Vencimento: '+formatDate(s.vencimento)});
   setDB('historico',hist);
-  const hidden = getDB('venc_hidden')||[];
-  hidden.push(id);
-  setDB('venc_hidden',hidden);
+  // Registra contato e agenda retorno em 1 semana
+  const vencData = getConf('venc_contatos',{});
+  const proximoContato = new Date(hoje);
+  proximoContato.setDate(proximoContato.getDate()+7);
+  vencData[id] = { data: hoje.toISOString(), proximoContato: proximoContato.toISOString() };
+  setConf('venc_contatos', vencData);
   renderVencimentos();
-  showToast('✅ Contato registrado!');
+  showToast('✅ Contato registrado! Retorno agendado em 1 semana.');
 }
 
 function excluirVenc(id){
-  if(!confirm('Excluir este vencimento da lista?')) return;
-  const hidden = getDB('venc_hidden')||[];
-  hidden.push(id);
-  setDB('venc_hidden',hidden);
+  if(!confirm('Excluir este vencimento da lista? Ficará no histórico.')) return;
+  const seg = getDB('segurados');
+  const s = seg.find(x=>x.id===id);
+  if(!s) return;
+  const excluidos = getConf('venc_excluidos',[]);
+  excluidos.push({id:s.id,nome:s.nome,tipo:tipoLabel(s.tipo),vencimento:formatDate(s.vencimento),motivo:'Excluído manualmente',dataExclusao:new Date().toISOString()});
+  setConf('venc_excluidos',excluidos);
   renderVencimentos();
-  showToast('🗑 Vencimento removido da lista.');
+  showToast('🗑 Vencimento movido para o histórico.');
+}
+
+function clearVencHistorico(){
+  if(!confirm('Limpar histórico de vencimentos excluídos?')) return;
+  setConf('venc_excluidos',[]);
+  renderVencimentos();
+  showToast('🗑 Histórico de vencimentos limpo.');
 }
 
 // ============ PLANOS & PROMOÇÕES ============
@@ -878,7 +952,8 @@ function removeItem(key,idx){
 }
 
 function savePlanos(){
-  showToast('💾 Configurações de planos salvas! (As alterações de % e itens já estão no localStorage.)');
+  // The planos_config key is read by index.html on the same domain
+  showToast('💾 Planos salvos! As alterações de desconto e itens estão sincronizadas com o site.');
 }
 
 // ============ NOVO SEGURADO ============
@@ -890,6 +965,7 @@ function saveSegurado(e){
     email:document.getElementById('s-email').value, tipo:document.getElementById('s-tipo').value,
     seguradora:document.getElementById('s-seguradora').value, apolice:document.getElementById('s-apolice').value,
     valor:parseFloat(document.getElementById('s-valor').value)||0,
+    comissao:parseFloat(document.getElementById('s-comissao').value)||0,
     inicio:document.getElementById('s-inicio').value, vencimento:document.getElementById('s-vencimento').value,
     bem:document.getElementById('s-bem').value, obs:document.getElementById('s-obs').value,
     status:'ativo', dynamicData:collectDynAdmin(), arquivos:[]
@@ -956,6 +1032,7 @@ function viewSegurado(id){
     +`<div><div class="dlabel">Seguradora</div><div class="dval">${s.seguradora||'-'}</div></div>`
     +`<div><div class="dlabel">Nº Apólice</div><div class="dval">${s.apolice||'-'}</div></div>`
     +`<div><div class="dlabel">Valor Prêmio</div><div class="dval">R$ ${(s.valor||0).toFixed(2)}</div></div>`
+    +`<div><div class="dlabel">Comissão</div><div class="dval" style="color:var(--success);font-weight:800">R$ ${(s.comissao||0).toFixed(2)}</div></div>`
     +`<div><div class="dlabel">Vigência</div><div class="dval">${formatDate(s.inicio)} a ${formatDate(s.vencimento)}</div></div>`
     +`<div class="detail-full"><div class="dlabel">Bem Segurado</div><div class="dval">${s.bem||'-'}</div></div>`
     +dynHtml
@@ -987,6 +1064,7 @@ function toggleEditSegurado(){
     +`<div><label class="dlabel">Seguradora</label><input class="einp" id="e-seguradora" value="${s.seguradora||''}"></div>`
     +`<div><label class="dlabel">Nº Apólice</label><input class="einp" id="e-apolice" value="${s.apolice||''}"></div>`
     +`<div><label class="dlabel">Valor Prêmio (R$)</label><input class="einp" id="e-valor" type="number" step="0.01" value="${s.valor||0}"></div>`
+    +`<div><label class="dlabel">Comissão (R$)</label><input class="einp" id="e-comissao" type="number" step="0.01" value="${s.comissao||0}"></div>`
     +`<div><label class="dlabel">Início Vigência</label><input class="einp" id="e-inicio" type="date" value="${s.inicio||''}"></div>`
     +`<div><label class="dlabel">Vencimento</label><input class="einp" id="e-vencimento" type="date" value="${s.vencimento||''}"></div>`
     +`<div class="detail-full"><label class="dlabel">Bem Segurado</label><input class="einp" id="e-bem" value="${s.bem||''}"></div>`
@@ -1006,6 +1084,7 @@ function saveEditSegurado(){
   seg[idx].seguradora = document.getElementById('e-seguradora').value;
   seg[idx].apolice = document.getElementById('e-apolice').value;
   seg[idx].valor = parseFloat(document.getElementById('e-valor').value)||0;
+  seg[idx].comissao = parseFloat(document.getElementById('e-comissao').value)||0;
   seg[idx].inicio = document.getElementById('e-inicio').value;
   seg[idx].vencimento = document.getElementById('e-vencimento').value;
   seg[idx].bem = document.getElementById('e-bem').value;
