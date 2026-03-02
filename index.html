@@ -491,7 +491,7 @@
     <li><a href="#planos">Planos</a></li>
     <li><a href="#contato">Contato</a></li>
   </ul>
-  <button class="nav-cta" onclick="openModal()">Solicitar Cotação</button>
+  <button class="nav-cta" data-modal="">Solicitar Cotação</button>
   <button class="nav-hamburger" id="navHamburger" onclick="toggleMobileNav()" aria-label="Menu">
     <span></span><span></span><span></span>
   </button>
@@ -505,7 +505,7 @@
     <li><a href="#planos" onclick="closeMobileNav()">Planos</a></li>
     <li><a href="#contato" onclick="closeMobileNav()">Contato</a></li>
   </ul>
-  <button class="nav-cta-mobile" onclick="closeMobileNav(); openModal()">Solicitar Cotação</button>
+  <button class="nav-cta-mobile" data-modal="" data-close-nav="1">Solicitar Cotação</button>
 </div>
 
 <!-- PROMO BANNER -->
@@ -524,7 +524,7 @@
       <h1>Proteja o que<br><em>mais importa</em><br>para você</h1>
       <p class="hero-desc">Seguros personalizados para você, sua família e seu patrimônio. Atendimento humano, ágil e dedicado — do primeiro contato até o acionamento.</p>
       <div class="hero-btns">
-        <button class="btn-blue" onclick="openModal()">Quero minha cotação grátis</button>
+        <button class="btn-blue" data-modal="">Quero minha cotação grátis</button>
         <a href="https://wa.me/5511987886129" target="_blank" class="btn-ghost">💬 Falar no WhatsApp</a>
       </div>
       <div class="hero-stats">
@@ -574,7 +574,7 @@
     <div class="services-grid">
 
       <!-- AUTO -->
-      <div class="service-card" onclick="openModal('auto')">
+      <div class="service-card" data-modal="auto">
         <div class="service-icon-wrap">🚗</div>
         <h3>Seguro Auto</h3>
         <p>Proteção completa contra roubo, colisão, incêndio e danos a terceiros para o seu veículo.</p>
@@ -583,7 +583,7 @@
       </div>
 
       <!-- RESIDENCIAL -->
-      <div class="service-card" onclick="openModal('residencial')">
+      <div class="service-card" data-modal="residencial">
         <div class="service-icon-wrap">🏠</div>
         <h3>Seguro Residencial</h3>
         <p>Proteja seu lar contra incêndio, roubo, danos elétricos e responsabilidade civil.</p>
@@ -592,7 +592,7 @@
       </div>
 
       <!-- EMPRESARIAL -->
-      <div class="service-card" onclick="openModal('empresarial')">
+      <div class="service-card" data-modal="empresarial">
         <div class="service-icon-wrap">🏢</div>
         <h3>Seguro Empresarial</h3>
         <p>Proteja seu negócio, estoque, equipamentos e responsabilidade civil de forma completa.</p>
@@ -601,7 +601,7 @@
       </div>
 
       <!-- VIAGEM -->
-      <div class="service-card" onclick="openModal('viagem')">
+      <div class="service-card" data-modal="viagem">
         <div class="service-icon-wrap">✈️</div>
         <h3>Seguro Viagem</h3>
         <p>Cobertura médica, bagagem e assistência 24h em destinos nacionais e internacionais.</p>
@@ -610,7 +610,7 @@
       </div>
 
       <!-- CELULAR -->
-      <div class="service-card" onclick="openModal('celular')">
+      <div class="service-card" data-modal="celular">
         <div class="service-icon-wrap">📱</div>
         <h3>Proteção para Celular</h3>
         <p>Roubo, furto, quebra acidental, danos elétricos e oxidação para o seu smartphone.</p>
@@ -619,7 +619,7 @@
       </div>
 
       <!-- PORTÁTEIS -->
-      <div class="service-card" onclick="openModal('portateis')">
+      <div class="service-card" data-modal="portateis">
         <div class="service-icon-wrap">💻</div>
         <h3>Portáteis & Equipamentos</h3>
         <p>Proteção para notebooks, câmeras, tablets e equipamentos profissionais contra danos e roubo.</p>
@@ -659,7 +659,7 @@
         <div class="plan-off"><span>até 30% OFF</span><small>na contratação</small></div>
         <p class="plan-desc">Ideal para quem busca proteção para o patrimônio essencial com custo acessível.</p>
         <ul class="plan-features"><li>Seguro residencial ou auto</li><li>Cobertura principal incluída</li><li>Assistência 24h básica</li><li>Suporte via WhatsApp</li></ul>
-        <button class="btn-plan" onclick="openModal()">Solicitar cotação</button>
+        <button class="btn-plan" data-modal="">Solicitar cotação</button>
       </div>
       <div class="plan-card featured">
         <div class="plan-feat-tag">⭐ MAIS POPULAR</div>
@@ -668,7 +668,7 @@
         <div class="plan-off"><span>até 35% OFF</span><small>na contratação</small></div>
         <p class="plan-desc">A solução mais completa para proteger família, veículo e patrimônio juntos.</p>
         <ul class="plan-features"><li>Auto + Residencial combinados</li><li>Proteção para toda a família</li><li>Assistência 24h premium</li><li>Consultor dedicado</li></ul>
-        <button class="btn-plan" onclick="openModal()">Solicitar cotação</button>
+        <button class="btn-plan" data-modal="">Solicitar cotação</button>
       </div>
       <div class="plan-card">
         <div class="plan-type">Premium</div>
@@ -676,7 +676,7 @@
         <div class="plan-off"><span>até 35% OFF</span><small>na contratação</small></div>
         <p class="plan-desc">Cobertura total para quem quer segurança máxima para tudo e todos.</p>
         <ul class="plan-features"><li>Auto + Residencial + Empresarial</li><li>Viagem + Celular + Portáteis</li><li>Atendimento VIP prioritário</li><li>Gestão completa de sinistros</li></ul>
-        <button class="btn-plan" onclick="openModal()">Solicitar cotação</button>
+        <button class="btn-plan" data-modal="">Solicitar cotação</button>
       </div>
     </div>
   </div>
