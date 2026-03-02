@@ -322,6 +322,36 @@
   @keyframes spPulse { 0%,100%{ opacity:1; } 50%{ opacity:0.3; } }
   .sp-viewers-text { font-size: 0.78rem; color: var(--blue-900); font-weight: 600; }
 
+
+  /* ===== PLAN MODAL ===== */
+  .plan-modal-overlay { position: fixed; inset: 0; background: rgba(10,22,40,0.85); z-index: 500; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity .3s; padding: 20px; }
+  .plan-modal-overlay.active { opacity: 1; pointer-events: all; }
+  .plan-modal { background: white; border-radius: 24px; width: 100%; max-width: 600px; max-height: 90vh; overflow-y: auto; transform: translateY(20px); transition: transform .3s; position: relative; }
+  .plan-modal-overlay.active .plan-modal { transform: translateY(0); }
+  .plan-modal-header { padding: 32px 36px 24px; border-bottom: 1px solid var(--gray-200); position: relative; }
+  .plan-modal-header.featured-header { background: var(--blue-900); border-radius: 24px 24px 0 0; }
+  .plan-modal-close { position: absolute; top: 16px; right: 20px; background: rgba(255,255,255,0.1); border: none; width: 32px; height: 32px; border-radius: 50%; font-size: 1rem; cursor: pointer; color: white; display: flex; align-items: center; justify-content: center; }
+  .plan-modal-close.dark { background: var(--gray-100); color: var(--gray-500); }
+  .plan-modal-badge { display: inline-flex; align-items: center; gap: 6px; font-size: 0.72rem; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 8px; }
+  .plan-modal-header h3 { font-family: 'Sora', sans-serif; font-size: 1.5rem; font-weight: 800; color: var(--blue-900); margin-bottom: 4px; }
+  .plan-modal-header.featured-header h3 { color: white; }
+  .plan-modal-header.featured-header .plan-modal-badge { color: var(--blue-400); }
+  .plan-modal-header p { color: var(--gray-500); font-size: 0.9rem; }
+  .plan-modal-header.featured-header p { color: rgba(255,255,255,0.65); }
+  .plan-modal-discount { display: inline-flex; align-items: center; gap: 6px; background: #fef2f2; border: 1px solid #fecaca; border-radius: 50px; padding: 4px 14px; margin-top: 10px; }
+  .plan-modal-discount span { color: var(--red); font-weight: 800; font-size: 0.95rem; }
+  .plan-modal-discount small { color: var(--red); font-size: 0.75rem; }
+  .plan-modal-includes { padding: 20px 36px; border-bottom: 1px solid var(--gray-200); background: var(--gray-50); }
+  .plan-modal-includes h5 { font-size: 0.72rem; font-weight: 800; text-transform: uppercase; letter-spacing: 2px; color: var(--blue-500); margin-bottom: 14px; }
+  .plan-modal-includes ul { list-style: none; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .plan-modal-includes ul li { font-size: 0.85rem; color: var(--blue-900); display: flex; gap: 8px; align-items: center; font-weight: 600; }
+  .plan-modal-includes ul li::before { content: '✓'; color: var(--blue-500); font-weight: 800; flex-shrink: 0; }
+  .plan-modal-form { padding: 28px 36px 32px; }
+  @media (max-width: 768px) {
+    .plan-modal-header, .plan-modal-includes, .plan-modal-form { padding-left: 20px; padding-right: 20px; }
+    .plan-modal-includes ul { grid-template-columns: 1fr; }
+  }
+
   /* RESPONSIVE */
   @media (max-width: 768px) {
     nav { padding: 0 20px; }
@@ -507,22 +537,22 @@
     <h2 class="section-heading">Escolha a proteção<br>ideal para você</h2>
     <p class="section-sub">Ofertas por tempo limitado com desconto garantido na contratação.</p>
     <div class="plans-grid">
-      <div class="plan-card">
+      <div class="plan-card" id="plan-essencial">
         <div class="plan-type">Essencial</div>
         <div class="plan-name">Proteção Básica</div>
         <div class="plan-off"><span>até 30% OFF</span><small>na contratação</small></div>
         <p class="plan-desc">Ideal para quem busca proteção para o patrimônio essencial com custo acessível.</p>
         <ul class="plan-features"><li>Seguro residencial ou auto</li><li>Cobertura principal incluída</li><li>Assistência 24h básica</li><li>Suporte via WhatsApp</li></ul>
-        <button class="btn-plan" onclick="openModal()">Solicitar cotação</button>
+        <button class="btn-plan" onclick="openPlanModal('essencial')">Solicitar cotação</button>
       </div>
-      <div class="plan-card featured">
+      <div class="plan-card featured" id="plan-familia">
         <div class="plan-feat-tag">⭐ MAIS POPULAR</div>
         <div class="plan-type">Família</div>
         <div class="plan-name">Proteção Completa</div>
         <div class="plan-off"><span>até 35% OFF</span><small>na contratação</small></div>
         <p class="plan-desc">A solução mais completa para proteger família, veículo e patrimônio juntos.</p>
         <ul class="plan-features"><li>Auto + Residencial combinados</li><li>Proteção para toda a família</li><li>Assistência 24h premium</li><li>Consultor dedicado</li></ul>
-        <button class="btn-plan" onclick="openModal()">Solicitar cotação</button>
+        <button class="btn-plan" onclick="openPlanModal('familia')">Solicitar cotação</button>
       </div>
       <div class="plan-card">
         <div class="plan-type">Premium</div>
@@ -530,7 +560,7 @@
         <div class="plan-off"><span>até 35% OFF</span><small>na contratação</small></div>
         <p class="plan-desc">Cobertura total para quem quer segurança máxima para tudo e todos.</p>
         <ul class="plan-features"><li>Auto + Residencial + Empresarial</li><li>Viagem + Celular + Portáteis</li><li>Atendimento VIP prioritário</li><li>Gestão completa de sinistros</li></ul>
-        <button class="btn-plan" onclick="openModal()">Solicitar cotação</button>
+        <button class="btn-plan" onclick="openPlanModal('premium')">Solicitar cotação</button>
       </div>
     </div>
   </div>
@@ -841,11 +871,140 @@ setTimeout(() => {
   spShowNext();
   setInterval(spShowNext, 6000);
 }, 3000);
+
+
+// ===== PLANOS MODAL =====
+const PLANS = {
+  essencial: {
+    badge: '⭐ ESSENCIAL',
+    title: 'Proteção Básica',
+    desc: 'Ideal para quem busca proteção para o patrimônio essencial com custo acessível.',
+    discount: 'até 30% OFF',
+    featured: false,
+    items: ['Seguro residencial ou auto', 'Cobertura principal incluída', 'Assistência 24h básica', 'Suporte via WhatsApp']
+  },
+  familia: {
+    badge: '⭐ MAIS POPULAR — FAMÍLIA',
+    title: 'Proteção Completa',
+    desc: 'A solução mais completa para proteger família, veículo e patrimônio juntos.',
+    discount: 'até 35% OFF',
+    featured: true,
+    items: ['Auto + Residencial combinados', 'Proteção para toda a família', 'Assistência 24h premium', 'Consultor dedicado']
+  },
+  premium: {
+    badge: '💎 PREMIUM',
+    title: 'Proteção Total',
+    desc: 'Cobertura total para quem quer segurança máxima para tudo e todos.',
+    discount: 'até 35% OFF',
+    featured: false,
+    items: ['Auto + Residencial + Empresarial', 'Viagem + Celular + Portáteis', 'Atendimento VIP prioritário', 'Gestão completa de sinistros']
+  }
+};
+
+let currentPlan = '';
+
+function openPlanModal(plan) {
+  const p = PLANS[plan];
+  if (!p) return;
+  currentPlan = plan;
+  const header = document.getElementById('planModalHeader');
+  const closeBtn = document.getElementById('planModalClose');
+  header.className = 'plan-modal-header' + (p.featured ? ' featured-header' : '');
+  closeBtn.className = 'plan-modal-close' + (p.featured ? '' : ' dark');
+  document.getElementById('planModalBadge').textContent = p.badge;
+  document.getElementById('planModalBadge').style.color = p.featured ? 'var(--blue-400)' : 'var(--blue-500)';
+  document.getElementById('planModalTitle').textContent = p.title;
+  document.getElementById('planModalDesc').textContent = p.desc;
+  document.getElementById('planModalDiscount').textContent = p.discount;
+  const ul = document.getElementById('planModalItems');
+  ul.innerHTML = p.items.map(i => `<li>${i}</li>`).join('');
+  // Reset form
+  document.getElementById('pm_nome').value = '';
+  document.getElementById('pm_tel').value = '';
+  document.getElementById('pm_email').value = '';
+  document.getElementById('pm_msg').value = '';
+  document.getElementById('planModalSuccess').style.display = 'none';
+  document.getElementById('planModalBtn').style.display = 'block';
+  document.getElementById('planModalOverlay').classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+
+function closePlanModal() {
+  document.getElementById('planModalOverlay').classList.remove('active');
+  document.body.style.overflow = '';
+}
+
+function closePlanModalOutside(e) {
+  if (e.target.id === 'planModalOverlay') closePlanModal();
+}
+
+function sendPlanForm() {
+  const nome = document.getElementById('pm_nome').value.trim();
+  const tel = document.getElementById('pm_tel').value.trim();
+  const email = document.getElementById('pm_email').value.trim();
+  const horario = document.getElementById('pm_horario').value;
+  const msg = document.getElementById('pm_msg').value.trim();
+  if (!nome || !tel || !email) { alert('Preencha nome, telefone e e-mail.'); return; }
+  const p = PLANS[currentPlan];
+  const body = encodeURIComponent(
+    `Nova solicitação de PLANO via site JN Seguros:\n\nPlano: ${p.title} (${currentPlan.toUpperCase()})\nDesconto: ${p.discount}\n\nNome: ${nome}\nTelefone: ${tel}\nE-mail: ${email}\nHorário preferido: ${horario || 'Qualquer'}\n\nItens do plano:\n${p.items.map(i => '• ' + i).join('\n')}\n${msg ? '\nMensagem: ' + msg : ''}`
+  );
+  window.location.href = `mailto:juliana_mariadasneves@hotmail.com?subject=${encodeURIComponent('Plano ' + p.title + ' — ' + nome)}&body=${body}`;
+  document.getElementById('planModalBtn').style.display = 'none';
+  document.getElementById('planModalSuccess').style.display = 'block';
+}
+
+document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeModal(); closePlanModal(); } });
+
 </script>
 
 <p style="text-align:center;font-size:0.7rem;margin-top:6px;opacity:0.4;">
   <a href="admin.html" id="adminLink" style="color:inherit;text-decoration:none;">Painel Admin</a>
 </p>
+
+
+<!-- PLAN MODAL -->
+<div class="plan-modal-overlay" id="planModalOverlay" onclick="closePlanModalOutside(event)">
+  <div class="plan-modal" id="planModal">
+    <div class="plan-modal-header" id="planModalHeader">
+      <button class="plan-modal-close dark" id="planModalClose" onclick="closePlanModal()">✕</button>
+      <div class="plan-modal-badge" id="planModalBadge"></div>
+      <h3 id="planModalTitle"></h3>
+      <p id="planModalDesc"></p>
+      <div class="plan-modal-discount"><span id="planModalDiscount"></span><small>na contratação</small></div>
+    </div>
+    <div class="plan-modal-includes" id="planModalIncludes">
+      <h5>O que está incluído</h5>
+      <ul id="planModalItems"></ul>
+    </div>
+    <div class="plan-modal-form">
+      <div class="form-row">
+        <div class="form-group"><label>Nome completo *</label><input type="text" id="pm_nome" placeholder="Seu nome"></div>
+        <div class="form-group"><label>Telefone / WhatsApp *</label><input type="tel" id="pm_tel" placeholder="(11) 99999-9999"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>E-mail *</label><input type="email" id="pm_email" placeholder="seu@email.com"></div>
+        <div class="form-group"><label>Melhor horário</label>
+          <select id="pm_horario">
+            <option value="">Qualquer horário</option>
+            <option>Manhã (8h–12h)</option><option>Tarde (12h–18h)</option><option>Noite (18h–22h)</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group"><label>Mensagem adicional (opcional)</label>
+        <textarea id="pm_msg" placeholder="Descreva sua necessidade ou faça uma pergunta..." style="resize:vertical;min-height:80px;width:100%;padding:11px 14px;border:1.5px solid var(--gray-200);border-radius:9px;font-family:inherit;font-size:0.88rem;outline:none;"></textarea>
+      </div>
+      <button class="btn-submit" id="planModalBtn" onclick="sendPlanForm()">Solicitar cotação do plano →</button>
+      <p class="form-note">🔒 Dados protegidos pela LGPD. Sem spam.</p>
+      <div class="success-msg" id="planModalSuccess" style="display:none;">
+        <div class="check">✅</div>
+        <h4>Recebemos sua solicitação!</h4>
+        <p>Em breve entraremos em contato sobre o plano escolhido.</p>
+        <a href="https://wa.me/5511987886129" target="_blank" class="btn-blue" style="display:inline-block;margin-top:18px;text-decoration:none;">Falar no WhatsApp</a>
+      </div>
+    </div>
+  </div>
+</div>
 
 </body>
 </html>
