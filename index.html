@@ -323,154 +323,22 @@
   .sp-viewers-text { font-size: 0.78rem; color: var(--blue-900); font-weight: 600; }
 
   /* RESPONSIVE */
-  /* ===== HAMBURGER MENU ===== */
-  .nav-hamburger {
-    display: none;
-    flex-direction: column;
-    justify-content: center;
-    gap: 5px;
-    width: 40px; height: 40px;
-    background: rgba(255,255,255,0.06);
-    border: 1px solid rgba(255,255,255,0.1);
-    border-radius: 8px;
-    cursor: pointer;
-    padding: 8px;
-    flex-shrink: 0;
-  }
-  .nav-hamburger span {
-    display: block; height: 2px;
-    background: white; border-radius: 2px;
-    transition: all .3s;
-  }
-  .nav-hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
-  .nav-hamburger.open span:nth-child(2) { opacity: 0; }
-  .nav-hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
-
-  /* Mobile nav overlay */
-  .mobile-nav {
-    display: none;
-    position: fixed; top: 68px; left: 0; right: 0;
-    background: rgba(10,22,40,0.98);
-    backdrop-filter: blur(20px);
-    z-index: 199;
-    padding: 20px 24px 32px;
-    border-bottom: 1px solid rgba(255,255,255,0.08);
-    transform: translateY(-10px);
-    opacity: 0;
-    transition: all .3s;
-  }
-  .mobile-nav.open { display: block; transform: translateY(0); opacity: 1; }
-  .mobile-nav ul { list-style: none; margin-bottom: 20px; }
-  .mobile-nav ul li { border-bottom: 1px solid rgba(255,255,255,0.06); }
-  .mobile-nav ul li a {
-    display: block; padding: 16px 4px;
-    color: rgba(255,255,255,0.85); text-decoration: none;
-    font-weight: 600; font-size: 1.05rem;
-    transition: color .2s;
-  }
-  .mobile-nav ul li a:hover { color: var(--blue-400); }
-  .mobile-nav .nav-cta-mobile {
-    display: block; width: 100%; padding: 15px;
-    background: var(--blue-500); color: white;
-    border: none; border-radius: 10px;
-    font-family: 'Plus Jakarta Sans', sans-serif;
-    font-weight: 700; font-size: 1rem;
-    cursor: pointer; text-align: center;
-  }
-
-  /* ===== TABLET (max 1024px) ===== */
-  @media (max-width: 1024px) {
-    nav { padding: 0 28px; }
-    .hero { padding: 100px 32px 70px; }
-    .hero-inner { gap: 44px; }
-    section, .partners-section { padding: 80px 32px; }
-    .contact-grid { gap: 48px; }
-    .plans-grid { grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); }
-    footer { padding: 48px 32px; }
-  }
-
-  /* ===== MOBILE (max 768px) ===== */
   @media (max-width: 768px) {
-    /* NAV */
     nav { padding: 0 20px; }
     .nav-links { display: none; }
-    .nav-cta { display: none; }
-    .nav-hamburger { display: flex; }
-
-    /* PROMO */
-    .promo-banner { padding: 10px 16px; }
-    .promo-banner p { font-size: 0.78rem; gap: 8px; }
-
-    /* SECTIONS */
-    section, .partners-section { padding: 60px 20px; }
-    .section-header { margin-bottom: 40px; }
-    .section-heading { font-size: clamp(1.5rem, 6vw, 2rem); }
-
-    /* HERO */
-    .hero { padding: 96px 20px 60px; min-height: auto; }
-    .hero-inner { grid-template-columns: 1fr; gap: 32px; }
+    section, .partners-section { padding: 70px 20px; }
+    .hero { padding: 100px 20px 70px; }
+    .hero-inner { grid-template-columns: 1fr; gap: 40px; }
     .hero-img-wrap { order: -1; }
-    .hero-img-wrap img { height: 260px; border-radius: 16px; }
-    .trust-badge { left: 16px; right: 16px; transform: none; min-width: auto; bottom: -14px; }
-    .trust-badge strong { font-size: 0.82rem; }
-    .hero h1 { font-size: clamp(1.9rem, 7vw, 2.6rem); }
-    .hero-desc { font-size: 0.92rem; margin-bottom: 28px; }
-    .hero-btns { flex-direction: column; }
-    .btn-blue, .btn-ghost { width: 100%; text-align: center; padding: 14px 20px; }
-    .hero-stats { gap: 24px; flex-wrap: wrap; margin-top: 36px; padding-top: 28px; }
-    .stat-num { font-size: 1.5rem; }
-
-    /* PARTNERS */
-    .partners-row { gap: 24px; }
-    .partner-logo { height: 42px; }
-
-    /* SERVICES */
-    .services-grid { grid-template-columns: 1fr 1fr; gap: 14px; }
-    .service-card { padding: 22px 16px; }
-    .service-icon-wrap { width: 54px; height: 54px; font-size: 1.6rem; }
-    .service-card h3 { font-size: 0.9rem; }
-    .service-card p { font-size: 0.8rem; }
-
-    /* WHY */
-    .why-grid { grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 40px; }
-    .why-card { padding: 22px 16px; }
-    .why-card h4 { font-size: 0.88rem; }
-    .why-card p { font-size: 0.78rem; }
-
-    /* PLANS */
-    .plans-grid { grid-template-columns: 1fr; gap: 20px; margin-top: 40px; }
-    .plan-card { padding: 28px 24px; }
-
-    /* CONTACT */
-    .contact-grid { grid-template-columns: 1fr; gap: 36px; }
+    .trust-badge { left: 20px; transform: none; min-width: auto; }
+    .contact-grid { grid-template-columns: 1fr; gap: 40px; }
     .form-row, .dyn-grid { grid-template-columns: 1fr; }
     .span-full { grid-column: auto; }
-    .form-card { padding: 28px 20px; }
-
-    /* FOOTER */
     footer { padding: 36px 20px; }
-
-    /* MODAL */
-    .modal { padding: 28px 18px; border-radius: 18px; }
-    .modal h3 { font-size: 1.2rem; }
-    .type-tabs { gap: 6px; }
-    .type-tab { padding: 6px 11px; font-size: 0.75rem; }
-
-    /* SOCIAL PROOF */
+    .modal { padding: 28px 20px; }
+    .partners-row { gap: 28px; }
     .sp-container { left: 12px; bottom: 90px; }
-    .sp-popup, .sp-viewers { min-width: 220px; max-width: 270px; }
-
-    /* WHATSAPP */
-    .wa-btn { width: 52px; height: 52px; bottom: 20px; right: 20px; }
-  }
-
-  /* ===== SMALL MOBILE (max 480px) ===== */
-  @media (max-width: 480px) {
-    .services-grid { grid-template-columns: 1fr; }
-    .why-grid { grid-template-columns: 1fr; }
-    .hero-stats { gap: 16px; }
-    .hero-stats > div { flex: 1 1 40%; }
-    .sp-popup, .sp-viewers { display: none; }
+    .sp-popup, .sp-viewers { min-width: 230px; max-width: 280px; }
   }
 </style>
 </head>
@@ -491,22 +359,8 @@
     <li><a href="#planos">Planos</a></li>
     <li><a href="#contato">Contato</a></li>
   </ul>
-  <button class="nav-cta" data-modal="">Solicitar Cotação</button>
-  <button class="nav-hamburger" id="navHamburger" onclick="toggleMobileNav()" aria-label="Menu">
-    <span></span><span></span><span></span>
-  </button>
+  <button class="nav-cta" onclick="openModal()">Solicitar Cotação</button>
 </nav>
-
-<!-- MOBILE NAV -->
-<div class="mobile-nav" id="mobileNav">
-  <ul>
-    <li><a href="#servicos" onclick="closeMobileNav()">Seguros</a></li>
-    <li><a href="#parceiros" onclick="closeMobileNav()">Parceiras</a></li>
-    <li><a href="#planos" onclick="closeMobileNav()">Planos</a></li>
-    <li><a href="#contato" onclick="closeMobileNav()">Contato</a></li>
-  </ul>
-  <button class="nav-cta-mobile" data-modal="" data-close-nav="1">Solicitar Cotação</button>
-</div>
 
 <!-- PROMO BANNER -->
 <div class="promo-banner">
@@ -524,7 +378,7 @@
       <h1>Proteja o que<br><em>mais importa</em><br>para você</h1>
       <p class="hero-desc">Seguros personalizados para você, sua família e seu patrimônio. Atendimento humano, ágil e dedicado — do primeiro contato até o acionamento.</p>
       <div class="hero-btns">
-        <button class="btn-blue" data-modal="">Quero minha cotação grátis</button>
+        <button class="btn-blue" onclick="openModal()">Quero minha cotação grátis</button>
         <a href="https://wa.me/5511987886129" target="_blank" class="btn-ghost">💬 Falar no WhatsApp</a>
       </div>
       <div class="hero-stats">
@@ -574,57 +428,57 @@
     <div class="services-grid">
 
       <!-- AUTO -->
-      <div class="service-card" data-modal="auto">
+      <div class="service-card" onclick="openModal('auto')">
         <div class="service-icon-wrap">🚗</div>
         <h3>Seguro Auto</h3>
         <p>Proteção completa contra roubo, colisão, incêndio e danos a terceiros para o seu veículo.</p>
         <div class="promo-pill"><span class="promo-pct">até 35% OFF</span><span class="promo-label">na contratação</span></div>
-        <button class="service-btn" data-modal="">Fazer cotação →</button>
+        <button class="service-btn">Fazer cotação →</button>
       </div>
 
       <!-- RESIDENCIAL -->
-      <div class="service-card" data-modal="residencial">
+      <div class="service-card" onclick="openModal('residencial')">
         <div class="service-icon-wrap">🏠</div>
         <h3>Seguro Residencial</h3>
         <p>Proteja seu lar contra incêndio, roubo, danos elétricos e responsabilidade civil.</p>
         <div class="promo-pill"><span class="promo-pct">até 30% OFF</span><span class="promo-label">na contratação</span></div>
-        <button class="service-btn" data-modal="residencial">Fazer cotação →</button>
+        <button class="service-btn">Fazer cotação →</button>
       </div>
 
       <!-- EMPRESARIAL -->
-      <div class="service-card" data-modal="empresarial">
+      <div class="service-card" onclick="openModal('empresarial')">
         <div class="service-icon-wrap">🏢</div>
         <h3>Seguro Empresarial</h3>
         <p>Proteja seu negócio, estoque, equipamentos e responsabilidade civil de forma completa.</p>
         <div class="promo-pill"><span class="promo-pct">até 30% OFF</span><span class="promo-label">na contratação</span></div>
-        <button class="service-btn" data-modal="empresarial">Fazer cotação →</button>
+        <button class="service-btn">Fazer cotação →</button>
       </div>
 
       <!-- VIAGEM -->
-      <div class="service-card" data-modal="viagem">
+      <div class="service-card" onclick="openModal('viagem')">
         <div class="service-icon-wrap">✈️</div>
         <h3>Seguro Viagem</h3>
         <p>Cobertura médica, bagagem e assistência 24h em destinos nacionais e internacionais.</p>
         <div class="promo-pill"><span class="promo-pct">até 31% OFF</span><span class="promo-label">na contratação</span></div>
-        <button class="service-btn" data-modal="viagem">Fazer cotação →</button>
+        <button class="service-btn">Fazer cotação →</button>
       </div>
 
       <!-- CELULAR -->
-      <div class="service-card" data-modal="celular">
+      <div class="service-card" onclick="openModal('celular')">
         <div class="service-icon-wrap">📱</div>
         <h3>Proteção para Celular</h3>
         <p>Roubo, furto, quebra acidental, danos elétricos e oxidação para o seu smartphone.</p>
         <div class="promo-pill"><span class="promo-pct">até 30% OFF</span><span class="promo-label">na contratação</span></div>
-        <button class="service-btn" data-modal="celular">Fazer cotação →</button>
+        <button class="service-btn">Fazer cotação →</button>
       </div>
 
       <!-- PORTÁTEIS -->
-      <div class="service-card" data-modal="portateis">
+      <div class="service-card" onclick="openModal('portateis')">
         <div class="service-icon-wrap">💻</div>
         <h3>Portáteis & Equipamentos</h3>
         <p>Proteção para notebooks, câmeras, tablets e equipamentos profissionais contra danos e roubo.</p>
         <div class="promo-pill"><span class="promo-pct">até 28% OFF</span><span class="promo-label">na contratação</span></div>
-        <button class="service-btn" data-modal="portateis">Fazer cotação →</button>
+        <button class="service-btn">Fazer cotação →</button>
       </div>
 
     </div>
@@ -659,7 +513,7 @@
         <div class="plan-off"><span>até 30% OFF</span><small>na contratação</small></div>
         <p class="plan-desc">Ideal para quem busca proteção para o patrimônio essencial com custo acessível.</p>
         <ul class="plan-features"><li>Seguro residencial ou auto</li><li>Cobertura principal incluída</li><li>Assistência 24h básica</li><li>Suporte via WhatsApp</li></ul>
-        <button class="btn-plan" data-modal="">Solicitar cotação</button>
+        <button class="btn-plan" onclick="openModal()">Solicitar cotação</button>
       </div>
       <div class="plan-card featured">
         <div class="plan-feat-tag">⭐ MAIS POPULAR</div>
@@ -668,7 +522,7 @@
         <div class="plan-off"><span>até 35% OFF</span><small>na contratação</small></div>
         <p class="plan-desc">A solução mais completa para proteger família, veículo e patrimônio juntos.</p>
         <ul class="plan-features"><li>Auto + Residencial combinados</li><li>Proteção para toda a família</li><li>Assistência 24h premium</li><li>Consultor dedicado</li></ul>
-        <button class="btn-plan" data-modal="">Solicitar cotação</button>
+        <button class="btn-plan" onclick="openModal()">Solicitar cotação</button>
       </div>
       <div class="plan-card">
         <div class="plan-type">Premium</div>
@@ -676,7 +530,7 @@
         <div class="plan-off"><span>até 35% OFF</span><small>na contratação</small></div>
         <p class="plan-desc">Cobertura total para quem quer segurança máxima para tudo e todos.</p>
         <ul class="plan-features"><li>Auto + Residencial + Empresarial</li><li>Viagem + Celular + Portáteis</li><li>Atendimento VIP prioritário</li><li>Gestão completa de sinistros</li></ul>
-        <button class="btn-plan" data-modal="">Solicitar cotação</button>
+        <button class="btn-plan" onclick="openModal()">Solicitar cotação</button>
       </div>
     </div>
   </div>
@@ -796,18 +650,6 @@
 </div>
 
 <script>
-// ===== MOBILE NAV =====
-function toggleMobileNav() {
-  const nav = document.getElementById('mobileNav');
-  const btn = document.getElementById('navHamburger');
-  nav.classList.toggle('open');
-  btn.classList.toggle('open');
-}
-function closeMobileNav() {
-  document.getElementById('mobileNav').classList.remove('open');
-  document.getElementById('navHamburger').classList.remove('open');
-}
-
 // ===== CAMPOS DINÂMICOS POR TIPO =====
 const FIELDS = {
   auto: {
@@ -982,16 +824,28 @@ function spShowNext() {
     const vEl = document.createElement('div');
     vEl.className = 'sp-viewers';
     vEl.innerHTML = `<div class="sp-viewers-dot"></div><div class="sp-viewers-text"><strong>${spViewers} pessoas</strong> estão vendo seguros agora</div>`;
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-  document.body.addEventListener('click', function(e) {
-    // Find clicked element or its parent with data-modal
-    var el = e.target.closest('[data-modal]');
-    if (!el) return;
-    if (el.getAttribute('data-close-nav') === '1') closeMobileNav();
-    var type = el.getAttribute('data-modal');
-    openModal(type || undefined);
-  });
-});
+    container.appendChild(vEl);
+    setTimeout(() => { vEl.classList.add('sp-hide'); setTimeout(() => vEl.remove(), 500); }, 4500);
+  } else {
+    const data = SP_DATA[spIdx % SP_DATA.length];
+    const el = document.createElement('div');
+    el.className = 'sp-popup';
+    el.innerHTML = `<div class="sp-avatar">${data.icon}</div><div class="sp-text"><div class="sp-name">${data.name} <span style="font-weight:400;${data.name} <span style="font-weight:400;color:var(--gray-500)">${data.action}</span></div><div class="sp-detail">${data.type}</div><div class="sp-time">${data.time}</div></div>`;
+    container.appendChild(el);
+    setTimeout(() => { el.classList.add('sp-hide'); setTimeout(() => el.remove(), 500); }, 4500);
+  }
+  spIdx++;
+}
+
+setTimeout(() => {
+  spShowNext();
+  setInterval(spShowNext, 6000);
+}, 3000);
 </script>
+
+<p style="text-align:center;font-size:0.7rem;margin-top:6px;opacity:0.4;">
+  <a href="admin.html" id="adminLink" style="color:inherit;text-decoration:none;">Painel Admin</a>
+</p>
+
+</body>
 </html>
