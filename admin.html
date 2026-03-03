@@ -1450,18 +1450,20 @@ function saveScriptUrl(){
   localStorage.setItem('ga_script_url', url);
 }
 
+var GA_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxINiO_zTv-28438zEnfNNDTxMU5nUfVfNkm_BU_8YWeJCx9rR6lIS8SnLkVJDQKvmzGQ/exec';
+
 function initAnalyticsPage(){
-  const url = localStorage.getItem('ga_script_url')||'';
+  const url = GA_SCRIPT_URL;
+  localStorage.setItem('ga_script_url', url);
   const el = document.getElementById('ga-script-url');
   if(el) el.value = url;
-  if(url){
-    document.getElementById('an-setup-box').style.display='none';
-    loadAnalyticsFromScript();
-  }
+  const setupBox = document.getElementById('an-setup-box');
+  if(setupBox) setupBox.style.display='none';
+  loadAnalyticsFromScript();
 }
 
 async function fetchGA(type){
-  const url = localStorage.getItem('ga_script_url')||document.getElementById('ga-script-url')?.value||'';
+  const url = GA_SCRIPT_URL || localStorage.getItem('ga_script_url')||document.getElementById('ga-script-url')?.value||'';
   const res = await fetch(`${url}?type=${type}`);
   const json = await res.json();
   if(!json.ok) throw new Error(json.error||'Erro ao buscar dados');
@@ -1469,7 +1471,7 @@ async function fetchGA(type){
 }
 
 async function loadAnalyticsFromScript(){
-  const url = document.getElementById('ga-script-url')?.value || localStorage.getItem('ga_script_url')||'';
+  const url = GA_SCRIPT_URL || document.getElementById('ga-script-url')?.value || localStorage.getItem('ga_script_url')||'';
   const errEl = document.getElementById('an-error');
   const loadEl = document.getElementById('an-loading');
   const placeholder = document.getElementById('an-placeholder');

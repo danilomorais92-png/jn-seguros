@@ -1028,6 +1028,8 @@ function sendContactForm() {
   });
   // Abre WhatsApp com os dados
   const msg = encodeURIComponent(`Olá! Meu nome é ${nome}.\nTelefone: ${tel}\nEmail: ${email}\nTipo de seguro: ${tipo}`);
+  // Evento de conversão Google Ads / Analytics
+  gtag('event', 'cotacao_enviada', { event_category: 'lead', event_label: 'contato', value: 1 });
   window.open(`https://wa.me/5511987886129?text=${msg}`, '_blank');
   document.getElementById('contactFormWrap').style.display = 'none';
   document.getElementById('contactSuccess').style.display = 'block';
@@ -1055,6 +1057,8 @@ function sendModalForm() {
   const tipoLabels = {auto:'Seguro Auto',residencial:'Seguro Residencial',empresarial:'Seguro Empresarial',viagem:'Seguro Viagem',celular:'Proteção Celular',portateis:'Portáteis & Equipamentos'};
   const detalhes = Object.entries(extra).map(([k,v])=>`${k}: ${v}`).join('\n');
   const msg = encodeURIComponent(`Olá! Gostaria de uma cotação.\nNome: ${nome}\nTelefone: ${tel}\nEmail: ${email}\nTipo: ${tipoLabels[currentType]||currentType}\nHorário: ${horario||'Qualquer'}${detalhes?'\n\n'+detalhes:''}`);
+  // Evento de conversão Google Ads / Analytics
+  gtag('event', 'cotacao_enviada', { event_category: 'lead', event_label: currentType || 'modal', value: 1 });
   window.open(`https://wa.me/5511987886129?text=${msg}`, '_blank');
   document.getElementById('modalFormWrap').style.display = 'none';
   document.getElementById('modalSuccess').style.display = 'block';
@@ -1187,6 +1191,8 @@ function sendPlanForm() {
   });
   // Abre WhatsApp (sem seletor de e-mail)
   var waMsg = encodeURIComponent('Olá! Tenho interesse no plano ' + p.title + '.\nNome: ' + nome + '\nTelefone: ' + tel + '\nEmail: ' + email + '\nHorário: ' + (horario||'Qualquer') + (msg_extra?'\n\n'+msg_extra:''));
+  // Evento de conversão Google Ads / Analytics
+  gtag('event', 'cotacao_enviada', { event_category: 'lead', event_label: 'plano', value: 1 });
   window.open('https://wa.me/5511987886129?text=' + waMsg, '_blank');
   document.getElementById('planModalBtn').style.display = 'none';
   document.getElementById('planModalSuccess').style.display = 'block';
