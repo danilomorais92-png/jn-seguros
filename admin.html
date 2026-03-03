@@ -209,7 +209,40 @@
   .sync-bar span { color: #047857; }
   .sync-bar .sync-time { margin-left: auto; color: var(--muted); font-size: 0.78rem; }
 
-  @media(max-width:900px){
+  .analytics-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 20px; margin-bottom: 28px; }
+  .an-card { background: var(--white); border-radius: 14px; padding: 22px 24px; border: 1px solid var(--border); }
+  .an-card .an-label { font-size: 0.78rem; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
+  .an-card .an-value { font-family: 'Sora', sans-serif; font-size: 2rem; font-weight: 800; color: var(--navy); }
+  .an-card .an-sub { font-size: 0.78rem; color: var(--muted); margin-top: 4px; }
+  .an-card .an-badge { display: inline-block; padding: 2px 8px; border-radius: 20px; font-size: 0.7rem; font-weight: 700; margin-top: 6px; }
+  .an-up { background: #d1fae5; color: #065f46; }
+  .an-down { background: #fee2e2; color: #991b1b; }
+  .an-row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 28px; }
+  .an-box { background: var(--white); border-radius: 14px; padding: 22px 24px; border: 1px solid var(--border); }
+  .an-box h4 { font-size: 0.9rem; font-weight: 700; color: var(--navy); margin-bottom: 16px; }
+  .an-source-row { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+  .an-source-name { flex: 1; font-size: 0.85rem; color: var(--text); font-weight: 500; }
+  .an-source-bar-wrap { flex: 2; background: #f1f5f9; border-radius: 99px; height: 8px; overflow: hidden; }
+  .an-source-bar { height: 8px; border-radius: 99px; background: linear-gradient(90deg, var(--blue), var(--accent)); transition: width 1s; }
+  .an-source-pct { font-size: 0.78rem; font-weight: 700; color: var(--navy); min-width: 36px; text-align: right; }
+  .an-realtime { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; padding: 14px 18px; background: #f0fdf4; border-radius: 10px; border: 1px solid #bbf7d0; }
+  .an-rt-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--success); animation: pulse-dot 1.5s infinite; flex-shrink: 0; }
+  @keyframes pulse-dot { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.5;transform:scale(1.4)} }
+  .an-rt-num { font-family: 'Sora', sans-serif; font-size: 2rem; font-weight: 800; color: var(--success); }
+  .an-rt-label { font-size: 0.82rem; color: var(--muted); }
+  .an-config-box { background: #eff6ff; border: 1.5px dashed var(--blue2); border-radius: 12px; padding: 20px 24px; margin-bottom: 28px; }
+  .an-config-box h4 { font-size: 0.9rem; font-weight: 700; color: var(--blue); margin-bottom: 8px; }
+  .an-config-box p { font-size: 0.83rem; color: var(--muted); margin-bottom: 12px; }
+  .an-config-row { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
+  .an-config-row input { padding: 8px 14px; border: 1.5px solid var(--border); border-radius: 8px; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 0.85rem; width: 220px; }
+  .an-config-row input:focus { outline: none; border-color: var(--blue2); }
+  .an-pages-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--border); font-size: 0.85rem; }
+  .an-pages-row:last-child { border-bottom: none; }
+  .an-pages-url { color: var(--text); font-weight: 500; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin-right: 12px; }
+  .an-pages-views { font-family: 'Sora', sans-serif; font-weight: 700; color: var(--navy); }
+  .an-embed-link { display: inline-flex; align-items: center; gap: 6px; padding: 10px 18px; background: var(--blue); color: white; border-radius: 8px; font-size: 0.85rem; font-weight: 600; text-decoration: none; transition: background .2s; }
+  .an-embed-link:hover { background: #1d4ed8; }
+  @media(max-width:900px){ .analytics-grid{grid-template-columns:1fr 1fr} .an-row2{grid-template-columns:1fr} }
     .stats-row{grid-template-columns:1fr 1fr;}
     .form-grid{grid-template-columns:1fr;}
     .chart-row{grid-template-columns:1fr;}
@@ -316,6 +349,7 @@ if(sessionStorage.getItem('jn_admin_auth')==='1'){
       <div class="nav-label">Gestão</div>
       <button class="nav-item" onclick="showPage('novo-segurado',this)"><span class="icon">➕</span> Novo Segurado</button>
       <button class="nav-item" onclick="showPage('historico',this)"><span class="icon">📋</span> Histórico</button>
+      <button class="nav-item" onclick="showPage('analytics',this)"><span class="icon">📈</span> Analytics do Site</button>
     </div>
   </nav>
   <div class="sidebar-footer">
@@ -509,9 +543,93 @@ if(sessionStorage.getItem('jn_admin_auth')==='1'){
       </table>
     </div>
   </div>
-</div>
 
-<!-- MODAL LEAD -->
+  <!-- PAGE ANALYTICS -->
+  <div class="page" id="page-analytics">
+
+    <div class="an-config-box">
+      <h4>🔑 Configurar Google Analytics</h4>
+      <p>Insira seu <strong>Property ID</strong> e o <strong>Access Token</strong> da API do Google Analytics 4 para carregar dados reais. O Property ID é encontrado em: Analytics → Admin → Configurações da propriedade.</p>
+      <div class="an-config-row">
+        <input type="text" id="ga-property-id" placeholder="Property ID (ex: 123456789)" oninput="saveGAConfig()">
+        <input type="password" id="ga-token" placeholder="Access Token (OAuth2)" oninput="saveGAConfig()">
+        <button class="btn-sm btn-green" onclick="loadAnalytics()">📊 Carregar dados</button>
+        <a class="an-embed-link" href="https://analytics.google.com/analytics/web/#/p$(document.getElementById('ga-property-id')?.value || '')/reports/intelligenthome" target="_blank">🔗 Abrir GA4</a>
+      </div>
+      <p style="margin-top:8px;font-size:0.75rem;color:var(--muted)">💡 Sem token? Clique em "Abrir GA4" para acessar o painel completo do Google Analytics.</p>
+    </div>
+
+    <div id="an-loading" style="display:none;text-align:center;padding:40px;color:var(--muted)">⏳ Carregando dados do Analytics...</div>
+    <div id="an-error" style="display:none;background:#fee2e2;border-radius:10px;padding:16px 20px;color:#991b1b;margin-bottom:20px;font-size:0.85rem"></div>
+
+    <!-- REALTIME + CARDS -->
+    <div id="an-content">
+      <!-- Realtime -->
+      <div class="an-box" style="margin-bottom:20px">
+        <h4>🟢 Usuários em Tempo Real</h4>
+        <div class="an-realtime">
+          <div class="an-rt-dot"></div>
+          <div>
+            <div class="an-rt-num" id="an-rt-users">—</div>
+            <div class="an-rt-label">visitantes agora no site</div>
+          </div>
+          <div style="margin-left:auto;text-align:right">
+            <div style="font-size:0.78rem;color:var(--muted)">Última atualização</div>
+            <div style="font-size:0.82rem;font-weight:600;color:var(--navy)" id="an-rt-time">—</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- KPI Cards -->
+      <div class="analytics-grid">
+        <div class="an-card">
+          <div class="an-label">Sessões (28 dias)</div>
+          <div class="an-value" id="an-sessions">—</div>
+          <div class="an-sub">Total de visitas</div>
+        </div>
+        <div class="an-card">
+          <div class="an-label">Usuários (28 dias)</div>
+          <div class="an-value" id="an-users">—</div>
+          <div class="an-sub">Visitantes únicos</div>
+        </div>
+        <div class="an-card">
+          <div class="an-label">Pageviews (28 dias)</div>
+          <div class="an-value" id="an-pageviews">—</div>
+          <div class="an-sub">Visualizações totais</div>
+        </div>
+        <div class="an-card">
+          <div class="an-label">Taxa de Rejeição</div>
+          <div class="an-value" id="an-bounce">—</div>
+          <div class="an-sub">Bounce rate</div>
+        </div>
+      </div>
+
+      <!-- Sources + Top Pages -->
+      <div class="an-row2">
+        <div class="an-box">
+          <h4>🌐 Origem do Tráfego</h4>
+          <div id="an-sources">
+            <div style="color:var(--muted);font-size:0.85rem">Carregue os dados para ver as origens.</div>
+          </div>
+        </div>
+        <div class="an-box">
+          <h4>📄 Páginas Mais Visitadas</h4>
+          <div id="an-pages">
+            <div style="color:var(--muted);font-size:0.85rem">Carregue os dados para ver as páginas.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Link GA4 direto -->
+      <div class="an-box" style="text-align:center;padding:32px">
+        <div style="font-size:2rem;margin-bottom:12px">📊</div>
+        <h4 style="margin-bottom:8px">Relatórios completos no Google Analytics</h4>
+        <p style="font-size:0.83rem;color:var(--muted);margin-bottom:20px">Para relatórios avançados, funis de conversão, mapas de calor e mais, acesse diretamente o GA4.</p>
+        <a href="https://analytics.google.com" target="_blank" class="an-embed-link" style="display:inline-flex">🔗 Abrir Google Analytics 4</a>
+      </div>
+    </div>
+  </div>
+</div>
 <div class="modal-bg" id="modal-lead" onclick="closeModal('modal-lead',event)">
   <div class="modal-box">
     <button class="modal-close" onclick="document.getElementById('modal-lead').classList.remove('open')">✕</button>
@@ -628,7 +746,7 @@ function showPage(id, btn){
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
   document.getElementById('page-'+id).classList.add('active');
   if(btn) btn.classList.add('active');
-  const titles={dashboard:'Dashboard',leads:'Leads',segurados:'Segurados',vencimentos:'Vencimentos','novo-segurado':'Novo Segurado',historico:'Histórico',planos:'Planos & Promoções'};
+  const titles={dashboard:'Dashboard',leads:'Leads',segurados:'Segurados',vencimentos:'Vencimentos','novo-segurado':'Novo Segurado',historico:'Histórico',planos:'Planos & Promoções',analytics:'Analytics do Site'};
   document.getElementById('page-title').textContent = titles[id]||id;
   renderPage(id);
   // Close mobile sidebar
@@ -643,6 +761,7 @@ function renderPage(id){
   if(id==='vencimentos') renderVencimentos();
   if(id==='historico') renderHistorico();
   if(id==='planos') renderPlanos();
+  if(id==='analytics') loadGAConfig();
 }
 
 // ============ HELPERS ============
@@ -1318,6 +1437,114 @@ window.onload = function(){
   renderDashboard();
   startAutoRefresh();
 };
+
+// ===== ANALYTICS =====
+function saveGAConfig(){
+  localStorage.setItem('ga_property_id', document.getElementById('ga-property-id')?.value||'');
+  localStorage.setItem('ga_token', document.getElementById('ga-token')?.value||'');
+}
+
+function loadGAConfig(){
+  const pid = localStorage.getItem('ga_property_id')||'';
+  const tok = localStorage.getItem('ga_token')||'';
+  const elPid = document.getElementById('ga-property-id');
+  const elTok = document.getElementById('ga-token');
+  if(elPid) elPid.value = pid;
+  if(elTok) elTok.value = tok;
+  return { pid, tok };
+}
+
+async function loadAnalytics(){
+  const { pid, tok } = loadGAConfig();
+  const errEl = document.getElementById('an-error');
+  const loadEl = document.getElementById('an-loading');
+  errEl.style.display='none';
+  if(!pid || !tok){
+    errEl.textContent = '⚠️ Preencha o Property ID e o Access Token para carregar os dados.';
+    errEl.style.display='block';
+    return;
+  }
+  loadEl.style.display='block';
+  try {
+    const fmt = d => d.toISOString().split('T')[0];
+    const today = new Date();
+    const start = new Date(today); start.setDate(start.getDate()-28);
+
+    // Realtime
+    const rtRes = await fetch(`https://analyticsdata.googleapis.com/v1beta/properties/${pid}:runRealtimeReport`, {
+      method:'POST',
+      headers:{'Authorization':'Bearer '+tok,'Content-Type':'application/json'},
+      body: JSON.stringify({ metrics:[{name:'activeUsers'}] })
+    });
+    if(!rtRes.ok) throw new Error('Token inválido ou Property ID incorreto. Verifique as credenciais.');
+    const rtData = await rtRes.json();
+    document.getElementById('an-rt-users').textContent = rtData.rows?.[0]?.metricValues?.[0]?.value || '0';
+    document.getElementById('an-rt-time').textContent = new Date().toLocaleTimeString('pt-BR');
+
+    // Main 28 dias
+    const mainRes = await fetch(`https://analyticsdata.googleapis.com/v1beta/properties/${pid}:runReport`, {
+      method:'POST',
+      headers:{'Authorization':'Bearer '+tok,'Content-Type':'application/json'},
+      body: JSON.stringify({
+        dateRanges:[{startDate:fmt(start), endDate:fmt(today)}],
+        metrics:[{name:'sessions'},{name:'activeUsers'},{name:'screenPageViews'},{name:'bounceRate'}]
+      })
+    });
+    const mainData = await mainRes.json();
+    const row = mainData.rows?.[0]?.metricValues || [];
+    document.getElementById('an-sessions').textContent  = Number(row[0]?.value||0).toLocaleString('pt-BR');
+    document.getElementById('an-users').textContent     = Number(row[1]?.value||0).toLocaleString('pt-BR');
+    document.getElementById('an-pageviews').textContent = Number(row[2]?.value||0).toLocaleString('pt-BR');
+    document.getElementById('an-bounce').textContent    = (parseFloat(row[3]?.value||0)*100).toFixed(1)+'%';
+
+    // Origens
+    const srcRes = await fetch(`https://analyticsdata.googleapis.com/v1beta/properties/${pid}:runReport`, {
+      method:'POST',
+      headers:{'Authorization':'Bearer '+tok,'Content-Type':'application/json'},
+      body: JSON.stringify({
+        dateRanges:[{startDate:fmt(start), endDate:fmt(today)}],
+        dimensions:[{name:'sessionDefaultChannelGrouping'}],
+        metrics:[{name:'sessions'}],
+        orderBys:[{metric:{metricName:'sessions'},desc:true}],
+        limit:5
+      })
+    });
+    const srcData = await srcRes.json();
+    const srcRows = srcData.rows||[];
+    const srcTotal = srcRows.reduce((a,r)=>a+Number(r.metricValues[0].value),0)||1;
+    document.getElementById('an-sources').innerHTML = srcRows.length
+      ? srcRows.map(r=>{
+          const pct = Math.round(Number(r.metricValues[0].value)/srcTotal*100);
+          return `<div class="an-source-row"><div class="an-source-name">${r.dimensionValues[0].value}</div><div class="an-source-bar-wrap"><div class="an-source-bar" style="width:${pct}%"></div></div><div class="an-source-pct">${pct}%</div></div>`;
+        }).join('')
+      : '<div style="color:var(--muted);font-size:0.85rem">Sem dados</div>';
+
+    // Páginas
+    const pgRes = await fetch(`https://analyticsdata.googleapis.com/v1beta/properties/${pid}:runReport`, {
+      method:'POST',
+      headers:{'Authorization':'Bearer '+tok,'Content-Type':'application/json'},
+      body: JSON.stringify({
+        dateRanges:[{startDate:fmt(start), endDate:fmt(today)}],
+        dimensions:[{name:'pagePath'}],
+        metrics:[{name:'screenPageViews'}],
+        orderBys:[{metric:{metricName:'screenPageViews'},desc:true}],
+        limit:6
+      })
+    });
+    const pgData = await pgRes.json();
+    const pgRows = pgData.rows||[];
+    document.getElementById('an-pages').innerHTML = pgRows.length
+      ? pgRows.map(r=>`<div class="an-pages-row"><div class="an-pages-url" title="${r.dimensionValues[0].value}">${r.dimensionValues[0].value}</div><div class="an-pages-views">${Number(r.metricValues[0].value).toLocaleString('pt-BR')}</div></div>`).join('')
+      : '<div style="color:var(--muted);font-size:0.85rem">Sem dados</div>';
+
+    loadEl.style.display='none';
+  } catch(e){
+    loadEl.style.display='none';
+    errEl.textContent = '❌ Erro: '+e.message;
+    errEl.style.display='block';
+  }
+}
+
 </script>
 </body>
 </html>
