@@ -815,7 +815,9 @@ function renderLeads(){
     const origemBadge = l.plano
       ? `<span class="lead-plano-badge lead-plano-${l.plano}">📦 Pacote ${planNomes[l.plano]||l.plano}</span>`
       : `<span class="lead-plano-badge lead-plano-site">🌐 Site</span>`;
-    const horario = l.horario || l.melhorHorario || l.horarioContato || '—';
+    const horario = l.horario || l.melhorHorario || l.horarioContato || l.melhor_horario || l.horario_contato || l['melhor horário'] || l['horário'] || l.bestTime || l.contactTime || '—';
+    // Debug: listar todas as chaves do lead para encontrar campo horário
+    const allKeys = Object.keys(l).join(', ');
     const horarioBadge = horario && horario !== '—'
       ? `<span style="display:inline-flex;align-items:center;gap:4px;background:#f0fdf4;color:#166534;border:1px solid #bbf7d0;border-radius:6px;padding:3px 8px;font-size:0.78rem;font-weight:600">🕐 ${horario}</span>`
       : `<span style="color:var(--muted);font-size:0.82rem">—</span>`;
@@ -824,7 +826,7 @@ function renderLeads(){
       <td><a href="https://wa.me/55${(l.telefone||'').replace(/\D/g,'')}" target="_blank" style="color:var(--success);text-decoration:none">📱 ${l.telefone}</a></td>
       <td>${l.email}</td>
       <td><span class="stat-badge badge-info">${tipoLabel(l.tipo)}</span> ${origemBadge}</td>
-      <td>${horarioBadge}</td>
+      <td title="Campos: ${allKeys}">${horarioBadge}</td>
       <td>${new Date(l.data).toLocaleDateString('pt-BR')}</td>
       <td>${l.contatoFeito?'<span class="stat-badge badge-success">✅ Contatado</span>':'<span class="stat-badge badge-gold">🎯 Novo</span>'}</td>
       <td style="display:flex;gap:6px;flex-wrap:wrap">
