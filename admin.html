@@ -549,33 +549,74 @@ if(sessionStorage.getItem('jn_admin_auth')==='1'){
 
     <!-- Atalhos rápidos -->
     <div style="display:flex;gap:12px;margin-bottom:24px;flex-wrap:wrap;align-items:center">
-      <a id="an-btn-home"    href="#" target="_blank" class="an-embed-link">📊 Visão Geral</a>
-      <a id="an-btn-rt"      href="#" target="_blank" class="an-embed-link" style="background:#059669">🟢 Tempo Real</a>
-      <a id="an-btn-acq"     href="#" target="_blank" class="an-embed-link" style="background:#7c3aed">🌐 Aquisição</a>
-      <a id="an-btn-pages"   href="#" target="_blank" class="an-embed-link" style="background:#b45309">📄 Páginas</a>
-      <span style="margin-left:auto;font-size:0.78rem;color:var(--muted)">Property ID: <strong id="an-pid-display">526582302</strong></span>
+      <a href="https://analytics.google.com/analytics/web/#/p526582302/reports/intelligenthome" target="_blank" class="an-embed-link">📊 Visão Geral</a>
+      <a href="https://analytics.google.com/analytics/web/#/p526582302/reports/realtime-overview" target="_blank" class="an-embed-link" style="background:#059669">🟢 Tempo Real</a>
+      <a href="https://analytics.google.com/analytics/web/#/p526582302/reports/acquisition-overview" target="_blank" class="an-embed-link" style="background:#7c3aed">🌐 Aquisição</a>
+      <a href="https://analytics.google.com/analytics/web/#/p526582302/reports/content-pages" target="_blank" class="an-embed-link" style="background:#b45309">📄 Páginas</a>
+      <span style="margin-left:auto;font-size:0.78rem;color:var(--muted)">Property ID: <strong>526582302</strong></span>
     </div>
 
-    <!-- Iframe GA4 -->
-    <div style="background:var(--white);border-radius:14px;border:1px solid var(--border);overflow:hidden;height:78vh;display:flex;flex-direction:column;">
-      <div style="padding:14px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;background:#f8fafc">
-        <span style="font-size:0.85rem;font-weight:600;color:var(--navy)">📈 Google Analytics 4 — JN Seguros</span>
-        <span style="font-size:0.72rem;color:var(--muted);margin-left:4px">Sempre atualizado em tempo real</span>
-        <div style="margin-left:auto;display:flex;gap:8px">
-          <button class="btn-sm" style="background:#f1f5f9;border:1px solid var(--border);color:var(--navy)" onclick="document.getElementById('ga4-frame').src=document.getElementById('ga4-frame').src">🔄 Recarregar</button>
-          <a id="an-btn-fullscreen" href="#" target="_blank" class="btn-sm" style="background:var(--blue);color:white;text-decoration:none">↗ Tela cheia</a>
-        </div>
+    <!-- Aviso + Token -->
+    <div class="an-config-box" style="margin-bottom:24px">
+      <h4>🔑 Conectar dados ao painel</h4>
+      <p>Cole seu <strong>Access Token</strong> para ver os dados aqui dentro. O token pode ser renovado em 1 clique quando expirar. Ou use os botões acima para acessar o GA4 diretamente.</p>
+      <div class="an-config-row">
+        <input type="password" id="ga-token" placeholder="Access Token (ya29...)" oninput="saveGAToken()">
+        <button class="btn-sm btn-green" onclick="loadAnalytics()">📊 Carregar dados</button>
+        <button class="btn-sm" style="background:#f1f5f9;border:1px solid var(--border);color:var(--navy)" onclick="renewToken()">🔄 Renovar token</button>
       </div>
-      <iframe id="ga4-frame"
-        src="https://analytics.google.com/analytics/web/#/p526582302/reports/intelligenthome"
-        style="flex:1;width:100%;border:none"
-        allow="fullscreen">
-      </iframe>
     </div>
 
-    <p style="margin-top:12px;font-size:0.75rem;color:var(--muted);text-align:center">
-      💡 O GA4 abrirá dentro do painel se você já estiver logado no Google. Caso peça login, faça uma vez e os dados ficarão sempre disponíveis.
-    </p>
+    <div id="an-error" style="display:none;background:#fee2e2;border-radius:10px;padding:16px 20px;color:#991b1b;margin-bottom:20px;font-size:0.85rem"></div>
+    <div id="an-loading" style="display:none;text-align:center;padding:40px;color:var(--muted)">⏳ Carregando dados...</div>
+
+    <!-- Cards de métricas -->
+    <div class="analytics-grid" id="an-cards" style="display:none">
+      <div class="an-card">
+        <div class="an-label">🟢 Agora no site</div>
+        <div class="an-value" id="an-rt-users">—</div>
+        <div class="an-sub" id="an-rt-time">visitantes em tempo real</div>
+      </div>
+      <div class="an-card">
+        <div class="an-label">Sessões (28 dias)</div>
+        <div class="an-value" id="an-sessions">—</div>
+        <div class="an-sub">Total de visitas</div>
+      </div>
+      <div class="an-card">
+        <div class="an-label">Usuários (28 dias)</div>
+        <div class="an-value" id="an-users">—</div>
+        <div class="an-sub">Visitantes únicos</div>
+      </div>
+      <div class="an-card">
+        <div class="an-label">Taxa de Rejeição</div>
+        <div class="an-value" id="an-bounce">—</div>
+        <div class="an-sub">Bounce rate</div>
+      </div>
+    </div>
+
+    <div class="an-row2" id="an-details" style="display:none">
+      <div class="an-box">
+        <h4>🌐 Origem do Tráfego</h4>
+        <div id="an-sources"></div>
+      </div>
+      <div class="an-box">
+        <h4>📄 Páginas Mais Visitadas</h4>
+        <div id="an-pages"></div>
+      </div>
+    </div>
+
+    <!-- Placeholder quando sem dados -->
+    <div id="an-placeholder" class="an-box" style="text-align:center;padding:48px">
+      <div style="font-size:3rem;margin-bottom:16px">📊</div>
+      <h4 style="margin-bottom:8px;font-size:1.1rem">Acesse o Google Analytics 4</h4>
+      <p style="font-size:0.85rem;color:var(--muted);margin-bottom:24px;max-width:400px;margin-left:auto;margin-right:auto">
+        Use os botões acima para acessar seus relatórios completos. Para ver os dados aqui dentro, cole o Access Token no campo acima.
+      </p>
+      <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+        <a href="https://analytics.google.com/analytics/web/#/p526582302/reports/intelligenthome" target="_blank" class="an-embed-link" style="font-size:0.9rem">🔗 Abrir GA4 agora</a>
+        <a href="https://developers.google.com/oauthplayground" target="_blank" class="an-embed-link" style="background:#6b7280;font-size:0.9rem">🔑 Gerar Access Token</a>
+      </div>
+    </div>
   </div>
 </div>
 <div class="modal-bg" id="modal-lead" onclick="closeModal('modal-lead',event)">
@@ -1388,22 +1429,105 @@ window.onload = function(){
 
 // ===== ANALYTICS =====
 const GA_PID = '526582302';
+
+function saveGAToken(){
+  localStorage.setItem('ga_token', document.getElementById('ga-token')?.value||'');
+}
+
 function initAnalyticsPage(){
-  const base = `https://analytics.google.com/analytics/web/#/p${GA_PID}`;
-  const links = {
-    'an-btn-home':       base + '/reports/intelligenthome',
-    'an-btn-rt':         base + '/reports/realtime-overview',
-    'an-btn-acq':        base + '/reports/acquisition-overview',
-    'an-btn-pages':      base + '/reports/content-pages',
-    'an-btn-fullscreen': base + '/reports/intelligenthome',
-  };
-  Object.entries(links).forEach(([id, url]) => {
-    const el = document.getElementById(id);
-    if(el) el.href = url;
-  });
-  const frame = document.getElementById('ga4-frame');
-  if(frame && frame.src !== base + '/reports/intelligenthome'){
-    frame.src = base + '/reports/intelligenthome';
+  const tok = localStorage.getItem('ga_token')||'';
+  const el = document.getElementById('ga-token');
+  if(el) el.value = tok;
+  if(tok) loadAnalytics();
+}
+
+function renewToken(){
+  window.open('https://developers.google.com/oauthplayground', '_blank');
+}
+
+async function loadAnalytics(){
+  const tok = document.getElementById('ga-token')?.value || localStorage.getItem('ga_token')||'';
+  const errEl = document.getElementById('an-error');
+  const loadEl = document.getElementById('an-loading');
+  const placeholder = document.getElementById('an-placeholder');
+  errEl.style.display='none';
+  if(!tok){ errEl.textContent='⚠️ Cole o Access Token para carregar os dados.'; errEl.style.display='block'; return; }
+  loadEl.style.display='block';
+  placeholder.style.display='none';
+  try {
+    const fmt = d => d.toISOString().split('T')[0];
+    const today = new Date(), start = new Date(today);
+    start.setDate(start.getDate()-28);
+    const headers = {'Authorization':'Bearer '+tok,'Content-Type':'application/json'};
+
+    // Realtime
+    const rtRes = await fetch(`https://analyticsdata.googleapis.com/v1beta/properties/${GA_PID}:runRealtimeReport`,
+      {method:'POST',headers,body:JSON.stringify({metrics:[{name:'activeUsers'}]})});
+    if(!rtRes.ok) throw new Error('Token inválido ou expirado. Clique em "Renovar token" para gerar um novo.');
+    const rtData = await rtRes.json();
+    document.getElementById('an-rt-users').textContent = rtData.rows?.[0]?.metricValues?.[0]?.value || '0';
+    document.getElementById('an-rt-time').textContent = 'Atualizado às '+new Date().toLocaleTimeString('pt-BR');
+
+    // 28 dias
+    const mainRes = await fetch(`https://analyticsdata.googleapis.com/v1beta/properties/${GA_PID}:runReport`,
+      {method:'POST',headers,body:JSON.stringify({
+        dateRanges:[{startDate:fmt(start),endDate:fmt(today)}],
+        metrics:[{name:'sessions'},{name:'activeUsers'},{name:'bounceRate'}]
+      })});
+    const mainData = await mainRes.json();
+    const row = mainData.rows?.[0]?.metricValues||[];
+    document.getElementById('an-sessions').textContent = Number(row[0]?.value||0).toLocaleString('pt-BR');
+    document.getElementById('an-users').textContent    = Number(row[1]?.value||0).toLocaleString('pt-BR');
+    document.getElementById('an-bounce').textContent   = (parseFloat(row[2]?.value||0)*100).toFixed(1)+'%';
+
+    // Origens
+    const srcRes = await fetch(`https://analyticsdata.googleapis.com/v1beta/properties/${GA_PID}:runReport`,
+      {method:'POST',headers,body:JSON.stringify({
+        dateRanges:[{startDate:fmt(start),endDate:fmt(today)}],
+        dimensions:[{name:'sessionDefaultChannelGrouping'}],
+        metrics:[{name:'sessions'}],
+        orderBys:[{metric:{metricName:'sessions'},desc:true}],limit:5
+      })});
+    const srcData = await srcRes.json();
+    const srcRows = srcData.rows||[];
+    const srcTotal = srcRows.reduce((a,r)=>a+Number(r.metricValues[0].value),0)||1;
+    document.getElementById('an-sources').innerHTML = srcRows.map(r=>{
+      const pct = Math.round(Number(r.metricValues[0].value)/srcTotal*100);
+      return `<div class="an-source-row"><div class="an-source-name">${r.dimensionValues[0].value}</div><div class="an-source-bar-wrap"><div class="an-source-bar" style="width:${pct}%"></div></div><div class="an-source-pct">${pct}%</div></div>`;
+    }).join('') || '<div style="color:var(--muted);font-size:0.85rem">Sem dados</div>';
+
+    // Páginas
+    const pgRes = await fetch(`https://analyticsdata.googleapis.com/v1beta/properties/${GA_PID}:runReport`,
+      {method:'POST',headers,body:JSON.stringify({
+        dateRanges:[{startDate:fmt(start),endDate:fmt(today)}],
+        dimensions:[{name:'pagePath'}],
+        metrics:[{name:'screenPageViews'}],
+        orderBys:[{metric:{metricName:'screenPageViews'},desc:true}],limit:6
+      })});
+    const pgData = await pgRes.json();
+    const pgRows = pgData.rows||[];
+    document.getElementById('an-pages').innerHTML = pgRows.map(r=>
+      `<div class="an-pages-row"><div class="an-pages-url" title="${r.dimensionValues[0].value}">${r.dimensionValues[0].value}</div><div class="an-pages-views">${Number(r.metricValues[0].value).toLocaleString('pt-BR')}</div></div>`
+    ).join('') || '<div style="color:var(--muted);font-size:0.85rem">Sem dados</div>';
+
+    loadEl.style.display='none';
+    document.getElementById('an-cards').style.display='grid';
+    document.getElementById('an-details').style.display='grid';
+    localStorage.setItem('ga_token', tok);
+
+    // Atualizar tempo real a cada 30s
+    clearInterval(window._gaRtInterval);
+    window._gaRtInterval = setInterval(async()=>{
+      const r = await fetch(`https://analyticsdata.googleapis.com/v1beta/properties/${GA_PID}:runRealtimeReport`,
+        {method:'POST',headers,body:JSON.stringify({metrics:[{name:'activeUsers'}]})});
+      if(r.ok){ const d=await r.json(); document.getElementById('an-rt-users').textContent=d.rows?.[0]?.metricValues?.[0]?.value||'0'; document.getElementById('an-rt-time').textContent='Atualizado às '+new Date().toLocaleTimeString('pt-BR'); }
+    }, 30000);
+
+  } catch(e){
+    loadEl.style.display='none';
+    placeholder.style.display='block';
+    errEl.textContent='❌ '+e.message;
+    errEl.style.display='block';
   }
 }
 
