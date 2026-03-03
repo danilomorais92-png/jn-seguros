@@ -407,7 +407,7 @@ if(sessionStorage.getItem('jn_admin_auth')==='1'){
         </div>
       </div>
       <table>
-        <thead><tr><th>Nome</th><th>WhatsApp</th><th>E-mail</th><th>Tipo / Origem</th><th>Data</th><th>Status</th><th>Ações</th></tr></thead>
+        <thead><tr><th>Nome</th><th>WhatsApp</th><th>E-mail</th><th>Tipo / Origem</th><th>Horário</th><th>Data</th><th>Status</th><th>Ações</th></tr></thead>
         <tbody id="leads-tbody"></tbody>
       </table>
     </div>
@@ -556,15 +556,24 @@ if(sessionStorage.getItem('jn_admin_auth')==='1'){
       <span style="margin-left:auto;font-size:0.78rem;color:var(--muted)">Property ID: <strong>526582302</strong></span>
     </div>
 
-    <!-- Aviso + Token -->
-    <div class="an-config-box" style="margin-bottom:24px">
-      <h4>🔑 Conectar dados ao painel</h4>
-      <p>Cole seu <strong>Access Token</strong> para ver os dados aqui dentro. O token pode ser renovado em 1 clique quando expirar. Ou use os botões acima para acessar o GA4 diretamente.</p>
+    <!-- Config Apps Script -->
+    <div class="an-config-box" style="margin-bottom:24px" id="an-setup-box">
+      <h4>🔗 Cole a URL do seu Apps Script</h4>
+      <p>Após fazer o deploy do Apps Script (instruções abaixo), cole a URL aqui. Ela fica salva e os dados carregam automaticamente para sempre.</p>
       <div class="an-config-row">
-        <input type="password" id="ga-token" placeholder="Access Token (ya29...)" oninput="saveGAToken()">
-        <button class="btn-sm btn-green" onclick="loadAnalytics()">📊 Carregar dados</button>
-        <button class="btn-sm" style="background:#f1f5f9;border:1px solid var(--border);color:var(--navy)" onclick="renewToken()">🔄 Renovar token</button>
+        <input type="text" id="ga-script-url" placeholder="https://script.google.com/macros/s/.../exec" oninput="saveScriptUrl()" style="width:380px">
+        <button class="btn-sm btn-green" onclick="loadAnalyticsFromScript()">📊 Conectar</button>
       </div>
+      <details style="margin-top:12px">
+        <summary style="font-size:0.78rem;color:var(--blue);cursor:pointer;font-weight:600">📋 Como fazer o deploy do Apps Script (clique para ver)</summary>
+        <ol style="font-size:0.78rem;color:var(--muted);margin-top:8px;padding-left:16px;line-height:1.8">
+          <li>Acesse <a href="https://script.google.com" target="_blank" style="color:var(--blue)">script.google.com</a> → "Novo projeto"</li>
+          <li>Cole o código do arquivo <strong>analytics-proxy.gs</strong> que você baixou</li>
+          <li>Clique em <strong>Implantar → Nova implantação</strong></li>
+          <li>Tipo: <strong>App da Web</strong> | Executar como: <strong>Eu</strong> | Acesso: <strong>Qualquer pessoa</strong></li>
+          <li>Clique <strong>Implantar</strong> → copie a URL gerada e cole acima</li>
+        </ol>
+      </details>
     </div>
 
     <div id="an-error" style="display:none;background:#fee2e2;border-radius:10px;padding:16px 20px;color:#991b1b;margin-bottom:20px;font-size:0.85rem"></div>
@@ -813,17 +822,22 @@ function renderDashboard(){
 function renderLeads(){
   const leads = getDB('leads');
   const tbody = document.getElementById('leads-tbody');
-  if(!leads.length){ tbody.innerHTML='<tr><td colspan="7" style="text-align:center;color:var(--muted);padding:40px">Nenhum lead cadastrado ainda.<br><span style="font-size:0.82rem">Os leads do site aparecerão aqui automaticamente quando o site usar o mesmo localStorage.</span></td></tr>'; return; }
+  if(!leads.length){ tbody.innerHTML='<tr><td colspan="8" style="text-align:center;color:var(--muted);padding:40px">Nenhum lead cadastrado ainda.<br><span style="font-size:0.82rem">Os leads do site aparecerão aqui automaticamente quando o site usar o mesmo localStorage.</span></td></tr>'; return; }
   tbody.innerHTML = leads.slice().reverse().map(l=>{
     const planNomes = {essencial:'Essencial',familia:'Família',premium:'Premium'};
     const origemBadge = l.plano
       ? `<span class="lead-plano-badge lead-plano-${l.plano}">📦 Pacote ${planNomes[l.plano]||l.plano}</span>`
       : `<span class="lead-plano-badge lead-plano-site">🌐 Site</span>`;
+    const horario = l.horario || l.melhorHorario || l.horarioContato || '—';
+    const horarioBadge = horario && horario !== '—'
+      ? `<span style="display:inline-flex;align-items:center;gap:4px;background:#f0fdf4;color:#166534;border:1px solid #bbf7d0;border-radius:6px;padding:3px 8px;font-size:0.78rem;font-weight:600">🕐 ${horario}</span>`
+      : `<span style="color:var(--muted);font-size:0.82rem">—</span>`;
     return `<tr>
       <td><strong>${l.nome}</strong></td>
       <td><a href="https://wa.me/55${(l.telefone||'').replace(/\D/g,'')}" target="_blank" style="color:var(--success);text-decoration:none">📱 ${l.telefone}</a></td>
       <td>${l.email}</td>
       <td><span class="stat-badge badge-info">${tipoLabel(l.tipo)}</span> ${origemBadge}</td>
+      <td>${horarioBadge}</td>
       <td>${new Date(l.data).toLocaleDateString('pt-BR')}</td>
       <td>${l.contatoFeito?'<span class="stat-badge badge-success">✅ Contatado</span>':'<span class="stat-badge badge-gold">🎯 Novo</span>'}</td>
       <td style="display:flex;gap:6px;flex-wrap:wrap">
@@ -851,6 +865,7 @@ function viewLead(id){
       <div><strong>Origem:</strong> ${l.plano?'Plano '+l.plano:'Site'}</div>
       ${l.veiculo?`<div style="grid-column:1/-1"><strong>Detalhes:</strong> ${l.veiculo}</div>`:''}
       <div><strong>Data:</strong> ${new Date(l.data).toLocaleDateString('pt-BR')}</div>
+      <div><strong>Horário p/ contato:</strong> ${l.horario||l.melhorHorario||l.horarioContato||'Não informado'}</div>
       <div><strong>Status:</strong> ${l.contatoFeito?'✅ Contatado':'🎯 Pendente'}</div>
       ${l.obs?`<div style="grid-column:1/-1"><strong>Obs:</strong> ${l.obs}</div>`:''}
     </div>`;
@@ -1430,102 +1445,86 @@ window.onload = function(){
 // ===== ANALYTICS =====
 const GA_PID = '526582302';
 
-function saveGAToken(){
-  localStorage.setItem('ga_token', document.getElementById('ga-token')?.value||'');
+function saveScriptUrl(){
+  const url = document.getElementById('ga-script-url')?.value||'';
+  localStorage.setItem('ga_script_url', url);
 }
 
 function initAnalyticsPage(){
-  const tok = localStorage.getItem('ga_token')||'';
-  const el = document.getElementById('ga-token');
-  if(el) el.value = tok;
-  if(tok) loadAnalytics();
+  const url = localStorage.getItem('ga_script_url')||'';
+  const el = document.getElementById('ga-script-url');
+  if(el) el.value = url;
+  if(url){
+    document.getElementById('an-setup-box').style.display='none';
+    loadAnalyticsFromScript();
+  }
 }
 
-function renewToken(){
-  window.open('https://developers.google.com/oauthplayground', '_blank');
+async function fetchGA(type){
+  const url = localStorage.getItem('ga_script_url')||document.getElementById('ga-script-url')?.value||'';
+  const res = await fetch(`${url}?type=${type}`);
+  const json = await res.json();
+  if(!json.ok) throw new Error(json.error||'Erro ao buscar dados');
+  return json.data;
 }
 
-async function loadAnalytics(){
-  const tok = document.getElementById('ga-token')?.value || localStorage.getItem('ga_token')||'';
+async function loadAnalyticsFromScript(){
+  const url = document.getElementById('ga-script-url')?.value || localStorage.getItem('ga_script_url')||'';
   const errEl = document.getElementById('an-error');
   const loadEl = document.getElementById('an-loading');
   const placeholder = document.getElementById('an-placeholder');
   errEl.style.display='none';
-  if(!tok){ errEl.textContent='⚠️ Cole o Access Token para carregar os dados.'; errEl.style.display='block'; return; }
+  if(!url){ errEl.textContent='⚠️ Cole a URL do Apps Script para conectar.'; errEl.style.display='block'; return; }
+  localStorage.setItem('ga_script_url', url);
   loadEl.style.display='block';
   placeholder.style.display='none';
+  document.getElementById('an-setup-box').style.display='none';
   try {
-    const fmt = d => d.toISOString().split('T')[0];
-    const today = new Date(), start = new Date(today);
-    start.setDate(start.getDate()-28);
-    const headers = {'Authorization':'Bearer '+tok,'Content-Type':'application/json'};
+    // Carregar tudo em paralelo
+    const [rt, summary, sources, pages] = await Promise.all([
+      fetchGA('realtime'),
+      fetchGA('summary'),
+      fetchGA('sources'),
+      fetchGA('pages')
+    ]);
 
     // Realtime
-    const rtRes = await fetch(`https://analyticsdata.googleapis.com/v1beta/properties/${GA_PID}:runRealtimeReport`,
-      {method:'POST',headers,body:JSON.stringify({metrics:[{name:'activeUsers'}]})});
-    if(!rtRes.ok) throw new Error('Token inválido ou expirado. Clique em "Renovar token" para gerar um novo.');
-    const rtData = await rtRes.json();
-    document.getElementById('an-rt-users').textContent = rtData.rows?.[0]?.metricValues?.[0]?.value || '0';
+    document.getElementById('an-rt-users').textContent = rt.activeUsers;
     document.getElementById('an-rt-time').textContent = 'Atualizado às '+new Date().toLocaleTimeString('pt-BR');
 
-    // 28 dias
-    const mainRes = await fetch(`https://analyticsdata.googleapis.com/v1beta/properties/${GA_PID}:runReport`,
-      {method:'POST',headers,body:JSON.stringify({
-        dateRanges:[{startDate:fmt(start),endDate:fmt(today)}],
-        metrics:[{name:'sessions'},{name:'activeUsers'},{name:'bounceRate'}]
-      })});
-    const mainData = await mainRes.json();
-    const row = mainData.rows?.[0]?.metricValues||[];
-    document.getElementById('an-sessions').textContent = Number(row[0]?.value||0).toLocaleString('pt-BR');
-    document.getElementById('an-users').textContent    = Number(row[1]?.value||0).toLocaleString('pt-BR');
-    document.getElementById('an-bounce').textContent   = (parseFloat(row[2]?.value||0)*100).toFixed(1)+'%';
+    // Summary
+    document.getElementById('an-sessions').textContent  = Number(summary.sessions).toLocaleString('pt-BR');
+    document.getElementById('an-users').textContent     = Number(summary.users).toLocaleString('pt-BR');
+    document.getElementById('an-bounce').textContent    = summary.bounceRate;
 
     // Origens
-    const srcRes = await fetch(`https://analyticsdata.googleapis.com/v1beta/properties/${GA_PID}:runReport`,
-      {method:'POST',headers,body:JSON.stringify({
-        dateRanges:[{startDate:fmt(start),endDate:fmt(today)}],
-        dimensions:[{name:'sessionDefaultChannelGrouping'}],
-        metrics:[{name:'sessions'}],
-        orderBys:[{metric:{metricName:'sessions'},desc:true}],limit:5
-      })});
-    const srcData = await srcRes.json();
-    const srcRows = srcData.rows||[];
-    const srcTotal = srcRows.reduce((a,r)=>a+Number(r.metricValues[0].value),0)||1;
-    document.getElementById('an-sources').innerHTML = srcRows.map(r=>{
-      const pct = Math.round(Number(r.metricValues[0].value)/srcTotal*100);
-      return `<div class="an-source-row"><div class="an-source-name">${r.dimensionValues[0].value}</div><div class="an-source-bar-wrap"><div class="an-source-bar" style="width:${pct}%"></div></div><div class="an-source-pct">${pct}%</div></div>`;
-    }).join('') || '<div style="color:var(--muted);font-size:0.85rem">Sem dados</div>';
+    document.getElementById('an-sources').innerHTML = sources.length
+      ? sources.map(r=>`<div class="an-source-row"><div class="an-source-name">${r.name}</div><div class="an-source-bar-wrap"><div class="an-source-bar" style="width:${r.pct}%"></div></div><div class="an-source-pct">${r.pct}%</div></div>`).join('')
+      : '<div style="color:var(--muted);font-size:0.85rem">Sem dados</div>';
 
     // Páginas
-    const pgRes = await fetch(`https://analyticsdata.googleapis.com/v1beta/properties/${GA_PID}:runReport`,
-      {method:'POST',headers,body:JSON.stringify({
-        dateRanges:[{startDate:fmt(start),endDate:fmt(today)}],
-        dimensions:[{name:'pagePath'}],
-        metrics:[{name:'screenPageViews'}],
-        orderBys:[{metric:{metricName:'screenPageViews'},desc:true}],limit:6
-      })});
-    const pgData = await pgRes.json();
-    const pgRows = pgData.rows||[];
-    document.getElementById('an-pages').innerHTML = pgRows.map(r=>
-      `<div class="an-pages-row"><div class="an-pages-url" title="${r.dimensionValues[0].value}">${r.dimensionValues[0].value}</div><div class="an-pages-views">${Number(r.metricValues[0].value).toLocaleString('pt-BR')}</div></div>`
-    ).join('') || '<div style="color:var(--muted);font-size:0.85rem">Sem dados</div>';
+    document.getElementById('an-pages').innerHTML = pages.length
+      ? pages.map(r=>`<div class="an-pages-row"><div class="an-pages-url" title="${r.path}">${r.path}</div><div class="an-pages-views">${Number(r.views).toLocaleString('pt-BR')}</div></div>`).join('')
+      : '<div style="color:var(--muted);font-size:0.85rem">Sem dados</div>';
 
     loadEl.style.display='none';
     document.getElementById('an-cards').style.display='grid';
     document.getElementById('an-details').style.display='grid';
-    localStorage.setItem('ga_token', tok);
 
     // Atualizar tempo real a cada 30s
     clearInterval(window._gaRtInterval);
     window._gaRtInterval = setInterval(async()=>{
-      const r = await fetch(`https://analyticsdata.googleapis.com/v1beta/properties/${GA_PID}:runRealtimeReport`,
-        {method:'POST',headers,body:JSON.stringify({metrics:[{name:'activeUsers'}]})});
-      if(r.ok){ const d=await r.json(); document.getElementById('an-rt-users').textContent=d.rows?.[0]?.metricValues?.[0]?.value||'0'; document.getElementById('an-rt-time').textContent='Atualizado às '+new Date().toLocaleTimeString('pt-BR'); }
+      try {
+        const rt = await fetchGA('realtime');
+        document.getElementById('an-rt-users').textContent = rt.activeUsers;
+        document.getElementById('an-rt-time').textContent = 'Atualizado às '+new Date().toLocaleTimeString('pt-BR');
+      } catch(e){}
     }, 30000);
 
   } catch(e){
     loadEl.style.display='none';
     placeholder.style.display='block';
+    document.getElementById('an-setup-box').style.display='block';
     errEl.textContent='❌ '+e.message;
     errEl.style.display='block';
   }
