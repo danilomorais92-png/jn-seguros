@@ -661,11 +661,9 @@ function seedIfEmpty(){
     const d = new Date(); d.setDate(d.getDate()+8);
     segurados[0].vencimento = d.toISOString().split('T')[0];
     setDB('segurados', segurados);
-    if(!getDB('leads').length){
-      setDB('leads',[
-        {id:20001,nome:'Juliana Costa',telefone:'(11) 92222-3333',email:'juliana@email.com',tipo:'auto',cpf:'',veiculo:'Fiat Uno 2019',obs:'Urgente',origem:'site',plano:'',data:new Date().toISOString(),contatoFeito:false},
-        {id:20002,nome:'Marcelo Santos',telefone:'(21) 98888-7777',email:'marcelo@email.com',tipo:'residencial',cpf:'',veiculo:'',obs:'',origem:'site',plano:'',data:new Date().toISOString(),contatoFeito:false},
-      ]);
+    // Inicializa leads como array vazio se nunca existiu
+    if(localStorage.getItem('leads') === null){
+      setDB('leads', []);
     }
     // Seed planos config
     if(!localStorage.getItem('planos_config')){
